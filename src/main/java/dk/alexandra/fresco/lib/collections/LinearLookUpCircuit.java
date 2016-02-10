@@ -84,7 +84,7 @@ public class LinearLookUpCircuit extends AbstractRoundBasedProtocol implements
 	 *            a basic numeric provider.
 	 */
 	public LinearLookUpCircuit(int securityParameter, SInt lookUpKey, SInt[] keys, SInt[] values,
-			SInt outputValue, LPFactory lpProvider,
+			SInt outputValue, LPFactory lpProvider, 
 			BasicNumericFactory bnProvider) {
 		if (keys.length != values.length) {
 			throw new IllegalArgumentException();
