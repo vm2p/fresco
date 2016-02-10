@@ -44,7 +44,7 @@ public interface SpdzConfiguration extends ProtocolSuiteConfiguration {
 	 * 
 	 * @return The maximum bit length of any number in the field. It should be possible to multiply two numbers without overflow
 	 */
-	int getMaxBitLength();
+	public int getMaxBitLength();
 
 	/**
 	 * The path to where preprocessed data is located, including the triples
@@ -61,7 +61,7 @@ public interface SpdzConfiguration extends ProtocolSuiteConfiguration {
 	 */
 	public boolean useDummyData();
 	
-	static SpdzConfiguration fromCmdArgs(SCEConfiguration sceConf,
+	public static SpdzConfiguration fromCmdArgs(SCEConfiguration sceConf,
 			String[] remainingArgs) throws ParseException {
 		Options options = new Options();
 
