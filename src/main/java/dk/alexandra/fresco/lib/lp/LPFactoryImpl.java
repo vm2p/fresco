@@ -51,19 +51,19 @@ import dk.alexandra.fresco.lib.math.integer.NumericNegateBitFactoryImpl;
 import dk.alexandra.fresco.lib.math.integer.PreprocessedNumericBitFactory;
 import dk.alexandra.fresco.lib.math.integer.exp.ExpFromOIntFactory;
 import dk.alexandra.fresco.lib.math.integer.exp.PreprocessedExpPipeFactory;
-import dk.alexandra.fresco.lib.math.integer.inv.InversionProtocolImpl;
 import dk.alexandra.fresco.lib.math.integer.inv.InversionProtocol;
+import dk.alexandra.fresco.lib.math.integer.inv.InversionProtocolImpl;
 import dk.alexandra.fresco.lib.math.integer.inv.LocalInversionFactory;
 import dk.alexandra.fresco.lib.math.integer.linalg.EntrywiseProductProtocol;
 import dk.alexandra.fresco.lib.math.integer.linalg.EntrywiseProductProtocolImpl;
 import dk.alexandra.fresco.lib.math.integer.linalg.InnerProductFactory;
 import dk.alexandra.fresco.lib.math.integer.linalg.InnerProductFactoryImpl;
 import dk.alexandra.fresco.lib.math.integer.linalg.InnerProductProtocol;
-import dk.alexandra.fresco.lib.math.integer.min.MinimumProtocol;
-import dk.alexandra.fresco.lib.math.integer.min.MinimumProtocolImpl;
 import dk.alexandra.fresco.lib.math.integer.min.MinInfFracProtocol;
 import dk.alexandra.fresco.lib.math.integer.min.MinimumFractionProtocol;
 import dk.alexandra.fresco.lib.math.integer.min.MinimumFractionProtocolImpl;
+import dk.alexandra.fresco.lib.math.integer.min.MinimumProtocol;
+import dk.alexandra.fresco.lib.math.integer.min.MinimumProtocolImpl;
 
 public class LPFactoryImpl implements LPFactory {
 

@@ -31,6 +31,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
 
+import org.junit.Assert;
+
 import dk.alexandra.fresco.framework.MPCException;
 import dk.alexandra.fresco.framework.ProtocolFactory;
 import dk.alexandra.fresco.framework.ProtocolProducer;
@@ -55,7 +57,6 @@ import dk.alexandra.fresco.lib.math.integer.inv.LocalInversionFactory;
 import dk.alexandra.fresco.suite.spdz.utils.LPInputReader;
 import dk.alexandra.fresco.suite.spdz.utils.PlainLPInputReader;
 import dk.alexandra.fresco.suite.spdz.utils.PlainSpdzLPPrefix;
-import org.junit.Assert;
 
 public class LPSolverTests {
 
