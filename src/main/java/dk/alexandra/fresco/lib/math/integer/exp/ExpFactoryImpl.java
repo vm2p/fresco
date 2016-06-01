@@ -27,19 +27,29 @@
 package dk.alexandra.fresco.lib.math.integer.exp;
 
 import dk.alexandra.fresco.framework.value.SInt;
+import dk.alexandra.fresco.lib.field.integer.BasicNumericFactory;
+import dk.alexandra.fresco.lib.helper.CopyProtocolFactory;
+import dk.alexandra.fresco.lib.math.integer.inv.InversionProtocolFactory;
 
-public interface ExponentiationPipeFactory {
+/**
+ * A "plain" {@link ExpFactory} implementation without use of preprocessing.
+ */
+public class ExpFactoryImpl implements ExpFactory {
 
-	/**
-	 * Creates a pipe containing R^-1, R, R^2, ..., R^l, where
-	 * l=outputs.length-1. This is used primarily as part of the comparison
-	 * protocols.
-	 * 
-	 * @param R
-	 *            the base of the exponentiation
-	 * @param outputs
-	 * @return
-	 */
-	public ExponentiationPipeProtocol getExponentiationProtocol(SInt R,
-			SInt[] outputs);
+	private InversionProtocolFactory invFac;
+	private BasicNumericFactory bnFac;
+	private CopyProtocolFactory<SInt> cpFac;
+
+	@Override
+	public ExponentiationPipeProtocol getExponentiationProtocol(SInt[] outputs) {
+		ExponentiationPipeProtocol expp = new ExponentiationPipeProtocolImpl(outputs, invFac, bnFac, cpFac);
+		return expp;
+	}
+
+	@Override
+	public ExpSequenceProtocol getExpSequenceProtocol(SInt x, SInt[] powers) {
+		ExpSequenceProtocol esp = new ExpSequenceProtocolImpl(x, powers, bnFac);
+		return esp;
+	}
+
 }

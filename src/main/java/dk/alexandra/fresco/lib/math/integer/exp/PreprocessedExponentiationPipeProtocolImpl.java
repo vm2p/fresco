@@ -33,21 +33,41 @@ import dk.alexandra.fresco.lib.helper.AbstractSimpleProtocol;
 import dk.alexandra.fresco.lib.helper.CopyProtocolImpl;
 import dk.alexandra.fresco.lib.helper.ParallelProtocolProducer;
 
-public class PreprocessedExponentiationPipeProtocolImpl extends AbstractSimpleProtocol implements ExponentiationPipeProtocol{
+/**
+ * Implements {@link ExponentiationPipeProtocol} by loading a preprocessed random 
+ * exp pipe.
+ */
+public class PreprocessedExponentiationPipeProtocolImpl extends AbstractSimpleProtocol
+		implements ExponentiationPipeProtocol {
 
 	private SInt[] expPipe;
-	private PreprocessedExpPipeFactory preproExpPipeFactory;
-	
-	public PreprocessedExponentiationPipeProtocolImpl(SInt[] expPipe, PreprocessedExpPipeFactory preproExpPipeFactory) {
+	private PreprocessedExpPipeFactory expPipeFac;
+
+	/**
+	 * Constructs a protocol that will load the exponentiation pipe from a {@link PreprocessedExponentiationPipeFactory}
+	 * note however that this is essentially wrong. The preprocessed material should be loaded on 
+	 * evaluation. 
+	 * 
+	 * @param expPipe
+	 *            output - SInt array in which to put the exponentiation pipe
+	 * @param preProExpPipeFactory
+	 *            a factory loading a exponentiation pipe from preprocessed
+	 *            material
+	 */
+	public PreprocessedExponentiationPipeProtocolImpl(SInt[] expPipe, PreprocessedExpPipeFactory preProExpPipeFactory) {
 		this.expPipe = expPipe;
-		this.preproExpPipeFactory = preproExpPipeFactory;
+		this.expPipeFac = preProExpPipeFactory;
 	}
 
 	@Override
 	protected ProtocolProducer initializeProtocolProducer() {
-		SInt[] exp = this.preproExpPipeFactory.getExponentiationPipe();
+		SInt[] exp = expPipeFac.getExponentiationPipe();
 		ParallelProtocolProducer par = new ParallelProtocolProducer();
-		for(int i = 0; i < this.expPipe.length; i++) {
+		if (exp.length < expPipe.length) {
+			// TODO: We could technically compute rest of the pipe if needed
+			throw new IllegalStateException("Preprocessed exponentiation pipe is to short.");
+		}
+		for (int i = 0; i < expPipe.length; i++) {
 			par.append(new CopyProtocolImpl<Value>(exp[i], expPipe[i]));
 		}
 		return par;

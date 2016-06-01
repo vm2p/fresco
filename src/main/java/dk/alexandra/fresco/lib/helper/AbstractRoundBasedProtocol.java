@@ -32,7 +32,7 @@ import dk.alexandra.fresco.framework.ProtocolProducer;
 import dk.alexandra.fresco.framework.value.Value;
 
 /**
- * A skeleton for a generic round based protocol. I.e., a protocol that consisting
+ * A skeleton for a generic round based protocol. I.e., a protocol consisting
  * of a number of sub-protocols that must be evaluated one after an other. This
  * can be a little more lightweight than using the SequentialprotocolProducer as
  * makes it easier to write a protocol where the sub-protocols are generated only

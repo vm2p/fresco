@@ -30,49 +30,59 @@ import dk.alexandra.fresco.framework.ProtocolProducer;
 import dk.alexandra.fresco.framework.value.SInt;
 import dk.alexandra.fresco.lib.field.integer.BasicNumericFactory;
 import dk.alexandra.fresco.lib.helper.AbstractRoundBasedProtocol;
-import dk.alexandra.fresco.lib.helper.CopyProtocolFactory;
 import dk.alexandra.fresco.lib.helper.builder.NumericProtocolBuilder;
-import dk.alexandra.fresco.lib.math.integer.inv.InversionProtocolFactory;
 
 /**
- * Computes {@link ExponentiationPipeProtocol} naively without the use of preprocessing
+ * Implements the {@link ExpSequenceProtocol} naively without the use of preprocessing.
+ * <p>
+ * We use the following method for a given non-zero <i>x</i>:
+ * <ol>
+ * <li> Denote by <i>i</i> the sequence of powers <i>x, ..., x<sup>i</sup></i> we have computed (initially <i>i = 1</i>)
+ * <li> Compute the sequence <i>x<sup>i</sup> * x , ..., x<sup>i</sup> * x<sup>i</sup> = x<sup>i + 1</sup>, ..., x<sup>2i</sup></i>
+ * <li> Repeat step 2 untill <i>i > k</i> 
+ * </ol>
+ * Note, that all multiplications in step 2 are independent, so each step can be done in a single round of multiplications.
+ * Thus the entire protocol uses <i>k</i> multiplications performed in <i>log(k)</i> rounds.
  */
-public class ExponentiationPipeProtocolImpl extends AbstractRoundBasedProtocol implements ExponentiationPipeProtocol {
+public class ExpSequenceProtocolImpl extends AbstractRoundBasedProtocol implements ExpSequenceProtocol {
 
-	private SInt r;
-	private final SInt[] outputs;
-	private final InversionProtocolFactory invFactory;
-	private final BasicNumericFactory factory;
-	private int state = 0;
+	private SInt x;
+	private SInt[] outputs;
+	private int idx = 0;
+	private BasicNumericFactory bnf;
 		
-	public ExponentiationPipeProtocolImpl(SInt[] outputs, InversionProtocolFactory invFactory,
-			BasicNumericFactory factory, CopyProtocolFactory<SInt> copyFactory) {
+	/**
+	 * Constructs
+	 * @param x
+	 * @param outputs
+	 * @param bnf
+	 */
+	public ExpSequenceProtocolImpl(SInt x, SInt[] outputs, BasicNumericFactory bnf) {
+		this.x = x;
 		this.outputs = outputs;
-		this.invFactory = invFactory;
-		this.factory = factory;
+		this.bnf = bnf;
 	}
-
+	
 	@Override
 	public ProtocolProducer nextProtocolProducer() {
-		NumericProtocolBuilder npb = new NumericProtocolBuilder(factory);
-		if (state == 0) {
-			r = npb.getRandSInt();
+		NumericProtocolBuilder npb = new NumericProtocolBuilder(bnf);
+		if (idx == 0) {
 			npb.beginParScope();
-			npb.addProtocolProducer(invFactory.getInversionProtocol(r, outputs[0]));
-			npb.copy(outputs[1], r);
-			npb.mult(outputs[2], r, r);
+			npb.copy(outputs[0], x);
+			npb.mult(outputs[1], x, x);
 			npb.endCurScope();	
-			state = 2;
-		} else if (state < outputs.length) {
+			idx = 2;
+		} else if (idx < outputs.length) {
 			npb.beginParScope();
-			for (int i = 1; i <= state && (state + i) < outputs.length; i++) {
-				npb.mult(outputs[state + i], outputs[i], outputs[state]);
+			for (int i = 0; i < idx && (idx + i) < outputs.length; i++) {
+				npb.mult(outputs[idx + i], outputs[i], outputs[idx]);
 			}
-			state = state << 1;
+			idx = idx << 1;
 			npb.endCurScope();
 		} else {
 			return null;
 		}
 		return npb.getProtocol();
 	}
+
 }

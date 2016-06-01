@@ -28,13 +28,26 @@ package dk.alexandra.fresco.lib.math.integer.exp;
 
 import dk.alexandra.fresco.framework.value.SInt;
 
-public class ExponentiationPipeFactoryImpl implements ExponentiationPipeFactory{
+public interface ExpFactory {
 
-	@Override
-	public ExponentiationPipeProtocol getExponentiationProtocol(SInt R,
-			SInt[] outputs) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	/**
+	 * A protocol that generates a sequence of values <i>r<sup>-1</sup>, r, r<sup>2</sup>
+	 * , ..., r<sup>k</sup></i> for a random <i>r</i>. 
+	 * 
+	 * @param pipe output - an array in which to put the generated sequence
+	 * @return the protocol
+	 */
+	public ExponentiationPipeProtocol getExponentiationProtocol(SInt[] pipe);
+	
+	/**
+	 * A protocol that generates a sequence <i>x, x<sup>2</sup>
+	 * , ..., x<sup>k</sup></i> for a given non-zero <i>x</i>.
+	 * 
+	 * Note, for x = 0 this may not be secure!
+	 * 
+	 * @param x input - the base value of the exponentiation sequence
+	 * @param powers output - an array in which to put the generated sequence
+	 * @return the protocol
+	 */
+	public ExpSequenceProtocol getExpSequenceProtocol(SInt x, SInt[] powers);
 }

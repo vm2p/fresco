@@ -58,7 +58,8 @@ public abstract class AbstractSimpleProtocol implements Protocol {
 		}
 		if (pp.hasNextProtocols()) {
 			pos = pp.getNextProtocols(nativeProtocols, pos);
-		} else if (!pp.hasNextProtocols()) {
+		}
+		if (!pp.hasNextProtocols()) {
 			done = true;
 			pp = null;
 		}

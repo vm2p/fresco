@@ -29,12 +29,15 @@ package dk.alexandra.fresco.lib.helper.builder;
 import java.math.BigInteger;
 
 import dk.alexandra.fresco.framework.ProtocolProducer;
+import dk.alexandra.fresco.framework.value.OInt;
 import dk.alexandra.fresco.framework.value.SInt;
 import dk.alexandra.fresco.lib.field.integer.BasicNumericFactory;
 import dk.alexandra.fresco.lib.helper.AbstractRepeatProtocol;
+import dk.alexandra.fresco.lib.helper.AbstractSimpleProtocol;
 import dk.alexandra.fresco.lib.helper.CopyProtocolImpl;
 import dk.alexandra.fresco.lib.helper.builder.tree.TreeProtocol;
 import dk.alexandra.fresco.lib.helper.builder.tree.TreeProtocolNodeGenerator;
+import dk.alexandra.fresco.lib.helper.sequential.SequentialProtocolProducer;
 
 public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 
@@ -42,6 +45,22 @@ public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 
 	public NumericProtocolBuilder(BasicNumericFactory bnp) {
 		this.bnf = bnp;
+	}
+
+	/**
+	 * Gets a random SInt.
+	 * 
+	 * @return an SInt that will be loaded with a random value
+	 */
+	public SInt getRandSInt() {
+		// Note, this implementation seems weird. The problem is that getting
+		// a random SInt really odd to be a protocol in it self. But this was
+		// implemented badly in the basic numeric factory
+		// here we attempt to simulate how things should be.
+		SInt tmp = bnf.getRandomSInt();
+		SInt r = getSInt();
+		copy(r, tmp);
+		return r;
 	}
 
 	/**
@@ -174,6 +193,44 @@ public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 	}
 
 	/**
+	 * In place version of {@link #add(SInt, SInt)}
+	 * 
+	 * @param result
+	 *            an SInt to store result
+	 * @param left
+	 *            lefthand input
+	 * @param right
+	 *            righthand input
+	 * @return the result SInt given above
+	 */
+	public SInt add(SInt result, SInt left, SInt right) {
+		append(bnf.getAddProtocol(left, right, result));
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @param left
+	 * @param right
+	 */
+	public SInt add(SInt left, OInt right) {
+		SInt result = getSInt();
+		append(bnf.getAddProtocol(left, right, result));
+		return result;
+	}
+	
+	/**
+	 * @param result
+	 * @param left
+	 * @param right
+	 * @return
+	 */
+	public SInt add(SInt result, SInt left, OInt right) {
+		append(bnf.getAddProtocol(left, right, result));
+		return result;
+	}
+
+	/**
 	 * Adds the lefthand array of SInts element-wise to the righthand array.
 	 * Note this means the righthand array must be at least as long as the
 	 * lefthand array.
@@ -282,6 +339,7 @@ public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 
 	/**
 	 * Takes a number of values and multiplies them all.
+	 * 
 	 * @param factors
 	 * @return
 	 */
@@ -346,6 +404,22 @@ public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 		SInt out = bnf.getSInt();
 		append(bnf.getMultProtocol(left, right, out));
 		return out;
+	}
+
+	/**
+	 * In place version of {@link #mult(SInt, SInt)}
+	 * 
+	 * @param result
+	 *            an SInt to store result
+	 * @param left
+	 *            lefthand input
+	 * @param right
+	 *            righthand input
+	 * @return the result SInt given above
+	 */
+	public SInt mult(SInt result, SInt left, SInt right) {
+		append(bnf.getMultProtocol(left, right, result));
+		return result;
 	}
 
 	/**
@@ -494,6 +568,7 @@ public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 	 * 
 	 * Note: this uses the generic CopyProtocol implementation, it is not clear
 	 * if this is safe for all protocol suites.
+	 * 
 	 * @param to
 	 *            the SInt to copy to
 	 * @param from
@@ -507,4 +582,5 @@ public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 	public void addProtocolProducer(ProtocolProducer gp) {
 		append(gp);
 	}
+	
 }

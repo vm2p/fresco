@@ -26,53 +26,29 @@
  *******************************************************************************/
 package dk.alexandra.fresco.lib.math.integer.exp;
 
-import dk.alexandra.fresco.framework.ProtocolProducer;
 import dk.alexandra.fresco.framework.value.SInt;
 import dk.alexandra.fresco.lib.field.integer.BasicNumericFactory;
-import dk.alexandra.fresco.lib.helper.AbstractRoundBasedProtocol;
-import dk.alexandra.fresco.lib.helper.CopyProtocolFactory;
-import dk.alexandra.fresco.lib.helper.builder.NumericProtocolBuilder;
-import dk.alexandra.fresco.lib.math.integer.inv.InversionProtocolFactory;
 
-/**
- * Computes {@link ExponentiationPipeProtocol} naively without the use of preprocessing
- */
-public class ExponentiationPipeProtocolImpl extends AbstractRoundBasedProtocol implements ExponentiationPipeProtocol {
+public class PreProExpFactory implements ExpFactory {
 
-	private SInt r;
-	private final SInt[] outputs;
-	private final InversionProtocolFactory invFactory;
-	private final BasicNumericFactory factory;
-	private int state = 0;
-		
-	public ExponentiationPipeProtocolImpl(SInt[] outputs, InversionProtocolFactory invFactory,
-			BasicNumericFactory factory, CopyProtocolFactory<SInt> copyFactory) {
-		this.outputs = outputs;
-		this.invFactory = invFactory;
-		this.factory = factory;
+	private PreprocessedExpPipeFactory preProExpPipeFactory;
+	private BasicNumericFactory bnFac;
+	
+	public PreProExpFactory(PreprocessedExpPipeFactory preProExpPipeFactory, BasicNumericFactory bnFac) {
+		this.preProExpPipeFactory = preProExpPipeFactory;
+		this.bnFac = bnFac;
 	}
 
 	@Override
-	public ProtocolProducer nextProtocolProducer() {
-		NumericProtocolBuilder npb = new NumericProtocolBuilder(factory);
-		if (state == 0) {
-			r = npb.getRandSInt();
-			npb.beginParScope();
-			npb.addProtocolProducer(invFactory.getInversionProtocol(r, outputs[0]));
-			npb.copy(outputs[1], r);
-			npb.mult(outputs[2], r, r);
-			npb.endCurScope();	
-			state = 2;
-		} else if (state < outputs.length) {
-			npb.beginParScope();
-			for (int i = 1; i <= state && (state + i) < outputs.length; i++) {
-				npb.mult(outputs[state + i], outputs[i], outputs[state]);
-			}
-			state = state << 1;
-			npb.endCurScope();
-		} else {
-			return null;
-		}
-		return npb.getProtocol();
+	public ExponentiationPipeProtocol getExponentiationProtocol(SInt[] pipe) {
+		ExponentiationPipeProtocol epp = new PreprocessedExponentiationPipeProtocolImpl(pipe, preProExpPipeFactory);
+		return epp;
 	}
+
+	@Override
+	public ExpSequenceProtocol getExpSequenceProtocol(SInt x, SInt[] powers) {
+		ExpSequenceProtocol esp = new MaskingExpSeqProtocol(x, powers, bnFac, this);
+		return esp;
+	}
+
 }
