@@ -43,26 +43,22 @@ import dk.alexandra.fresco.framework.value.OInt;
 import dk.alexandra.fresco.framework.value.SInt;
 import dk.alexandra.fresco.lib.compare.RandomAdditiveMaskFactory;
 import dk.alexandra.fresco.lib.compare.RandomAdditiveMaskFactoryImpl;
+import dk.alexandra.fresco.lib.conversion.IntegerToBitsFactory;
+import dk.alexandra.fresco.lib.conversion.IntegerToBitsFactoryImpl;
 import dk.alexandra.fresco.lib.field.integer.BasicNumericFactory;
 import dk.alexandra.fresco.lib.helper.builder.NumericIOBuilder;
 import dk.alexandra.fresco.lib.helper.sequential.SequentialProtocolProducer;
 import dk.alexandra.fresco.lib.math.integer.PreprocessedNumericBitFactory;
+import dk.alexandra.fresco.lib.math.integer.binary.BitLengthFactory;
+import dk.alexandra.fresco.lib.math.integer.binary.BitLengthFactoryImpl;
 import dk.alexandra.fresco.lib.math.integer.binary.RightShiftFactory;
 import dk.alexandra.fresco.lib.math.integer.binary.RightShiftFactoryImpl;
 import dk.alexandra.fresco.lib.math.integer.division.DivisionFactory;
 import dk.alexandra.fresco.lib.math.integer.division.DivisionFactoryImpl;
+import dk.alexandra.fresco.lib.math.integer.exp.ExponentiationFactory;
+import dk.alexandra.fresco.lib.math.integer.exp.ExponentiationFactoryImpl;
+import dk.alexandra.fresco.lib.math.integer.inv.LocalInversionFactory;
 
-
-/**
- * Generic test cases for basic finite field operations.
- * 
- * Can be reused by a test case for any protocol suite that implements the basic
- * field protocol factory.
- *
- * TODO: Generic tests should not reside in the runtime package. Rather in
- * mpc.lib or something.
- *
- */
 public class SqrtTests {
 
 	private abstract static class ThreadWithFixture extends TestThread {
@@ -82,12 +78,24 @@ public class SqrtTests {
 		public TestThread next(TestThreadConfiguration conf) {
 			
 			return new ThreadWithFixture() {
-				private final BigInteger x = new BigInteger("423402342001");
+				
+				private final BigInteger[] x = new BigInteger[] { 
+						BigInteger.valueOf(1234), 
+						BigInteger.valueOf(12345), 
+						BigInteger.valueOf(123456), 
+						BigInteger.valueOf(1234567),
+						BigInteger.valueOf(12345678), 
+						BigInteger.valueOf(123456789) 
+						};
+				private final int n = x.length;
 
+				private OInt[] precision = new OInt[n];
+				
 				@Override
 				public void test() throws Exception {
 					TestApplication app = new TestApplication() {
 
+						
 						private static final long serialVersionUID = 701623441111137585L;
 						
 						@Override
@@ -97,35 +105,62 @@ public class SqrtTests {
 							BasicNumericFactory basicNumericFactory = (BasicNumericFactory) factory;
 							PreprocessedNumericBitFactory preprocessedNumericBitFactory = (PreprocessedNumericBitFactory) factory;
 							RandomAdditiveMaskFactory randomAdditiveMaskFactory = new RandomAdditiveMaskFactoryImpl(basicNumericFactory, preprocessedNumericBitFactory);
-							RightShiftFactory rightShiftFactory = new RightShiftFactoryImpl(80, basicNumericFactory, randomAdditiveMaskFactory);
-							DivisionFactory divisionFactory = new DivisionFactoryImpl(basicNumericFactory, rightShiftFactory);
+							LocalInversionFactory localInversionFactory = (LocalInversionFactory) factory;
+							RightShiftFactory rightShiftFactory = new RightShiftFactoryImpl(basicNumericFactory, randomAdditiveMaskFactory, localInversionFactory);
+							IntegerToBitsFactory integerToBitsFactory = new IntegerToBitsFactoryImpl(basicNumericFactory, rightShiftFactory);
+							BitLengthFactory bitLengthFactory = new BitLengthFactoryImpl(basicNumericFactory, integerToBitsFactory);
+							ExponentiationFactory exponentiationFactory = new ExponentiationFactoryImpl(basicNumericFactory, integerToBitsFactory);
+							DivisionFactory divisionFactory = new DivisionFactoryImpl(basicNumericFactory, rightShiftFactory, bitLengthFactory, exponentiationFactory);
 							SquareRootFactory squareRootFactory = new SquareRootFactoryImpl(basicNumericFactory, divisionFactory, rightShiftFactory);
 							
-							SInt sqrt = basicNumericFactory.getSInt();
+							SInt[] sqrt = new SInt[n];
 
 							NumericIOBuilder ioBuilder = new NumericIOBuilder(basicNumericFactory);
 							SequentialProtocolProducer sequentialProtocolProducer = new SequentialProtocolProducer();
 							
-							SInt input1 = ioBuilder.input(x, 1);
+							SInt[] inputs = ioBuilder.inputArray(x, 1);
 							sequentialProtocolProducer.append(ioBuilder.getProtocol());
 							
-							SquareRootProtocol squareRootProtocol = squareRootFactory.getSquareRootProtocol(input1, x.bitLength(), sqrt);
-							sequentialProtocolProducer.append(squareRootProtocol);
+							for (int i = 0; i < n; i++) {
+								sqrt[i] = basicNumericFactory.getSInt();
+								precision[i] = basicNumericFactory.getOInt();
+								SquareRootProtocol squareRootProtocol = squareRootFactory.getSquareRootProtocol(inputs[i], x[i].bitLength(), sqrt[i], precision[i]);
+								sequentialProtocolProducer.append(squareRootProtocol);
+							}
 							
-							OInt output1 = ioBuilder.output(sqrt);
+							OInt[] outputs = ioBuilder.outputArray(sqrt);
 							
 							sequentialProtocolProducer.append(ioBuilder.getProtocol());
 							
 							ProtocolProducer gp = sequentialProtocolProducer;
 							
-							outputs = new OInt[] {output1};
+							this.outputs = outputs;
 							
 							return gp;
 						}
 					};
+					
 					sce.runApplication(app);
-					BigInteger sqrt = app.getOutputs()[0].getValue();
-					Assert.assertEquals(sqrt, BigInteger.valueOf(650693));
+					
+					for (int i = 0; i < n; i++) {
+						BigInteger actual = app.getOutputs()[i].getValue();
+						BigInteger expected = BigInteger.valueOf((long) Math.sqrt(x[i].intValue()));
+						
+						BigInteger difference = expected.subtract(actual).abs();
+						
+						int precision = expected.bitLength() - difference.bitLength();
+						
+						boolean shouldBeCorrect = precision >= expected.bitLength(); expected.equals(actual);
+						boolean isCorrect = expected.equals(actual);
+						
+						Assert.assertFalse(shouldBeCorrect && !isCorrect);
+						
+						System.out.println("sqrt(" + x[i] + ") = " + actual + ", expected " + expected + ". " + (!isCorrect ? 
+								"Got precision " + precision + "/" + expected.bitLength() + ", expected at least " + this.precision[i].getValue().intValue() : ""));
+						if (!isCorrect) {
+							Assert.assertTrue(precision >= this.precision[i].getValue().intValue());
+						}
+					}
 				}
 			};
 		}

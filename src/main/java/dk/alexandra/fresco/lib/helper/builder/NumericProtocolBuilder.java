@@ -33,11 +33,9 @@ import dk.alexandra.fresco.framework.value.OInt;
 import dk.alexandra.fresco.framework.value.SInt;
 import dk.alexandra.fresco.lib.field.integer.BasicNumericFactory;
 import dk.alexandra.fresco.lib.helper.AbstractRepeatProtocol;
-import dk.alexandra.fresco.lib.helper.AbstractSimpleProtocol;
 import dk.alexandra.fresco.lib.helper.CopyProtocolImpl;
 import dk.alexandra.fresco.lib.helper.builder.tree.TreeProtocol;
 import dk.alexandra.fresco.lib.helper.builder.tree.TreeProtocolNodeGenerator;
-import dk.alexandra.fresco.lib.helper.sequential.SequentialProtocolProducer;
 
 public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 
@@ -193,6 +191,7 @@ public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * In place version of {@link #add(SInt, SInt)}
 	 * 
 	 * @param result
@@ -209,17 +208,6 @@ public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 	}
 	
 	/**
-	 * 
-	 * @param left
-	 * @param right
-	 */
-	public SInt add(SInt left, OInt right) {
-		SInt result = getSInt();
-		append(bnf.getAddProtocol(left, right, result));
-		return result;
-	}
-	
-	/**
 	 * @param result
 	 * @param left
 	 * @param right
@@ -231,6 +219,22 @@ public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 	}
 
 	/**
+	 * Adds an SInt and an OInt
+	 * 
+	 * @param left
+	 *            the lefthand input
+	 * @param right
+	 *            the righthand input
+	 * @return an SInt representing the result of the addition
+	 */
+	public SInt add(SInt left, OInt right) {
+		SInt out = bnf.getSInt();
+		append(bnf.getAddProtocol(left, right, out));
+		return out;
+	}
+	
+	/**
+
 	 * Adds the lefthand array of SInts element-wise to the righthand array.
 	 * Note this means the righthand array must be at least as long as the
 	 * lefthand array.
@@ -422,6 +426,21 @@ public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 		return result;
 	}
 
+    /**
+	 * Multiplies an OInt and an SInt
+	 * 
+	 * @param left
+	 *            the lefthand input
+	 * @param right
+	 *            the righthand input
+	 * @return an SInt representing the result of the multiplication
+	 */
+	public SInt mult(OInt left, SInt right) {
+		SInt out = bnf.getSInt();
+		append(bnf.getMultProtocol(left, right, out));
+		return out;
+	}
+	
 	/**
 	 * Scales the right side array of SInts.
 	 * 
@@ -485,6 +504,36 @@ public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 	}
 
 	/**
+	 * Subtracts the righthand SInt from the lefthand OInt.
+	 * 
+	 * @param left
+	 *            the lefthand input
+	 * @param right
+	 *            the righthand input
+	 * @return an SInt representing the result of the subtraction.
+	 */
+	public SInt sub(OInt left, SInt right) {
+		SInt out = bnf.getSInt();
+		append(bnf.getSubtractProtocol(left, right, out));
+		return out;
+	}
+	
+	/**
+	 * Subtracts the righthand OInt from the lefthand SInt.
+	 * 
+	 * @param left
+	 *            the lefthand input
+	 * @param right
+	 *            the righthand input
+	 * @return an SInt representing the result of the subtraction.
+	 */
+	public SInt sub(SInt left, OInt right) {
+		SInt out = bnf.getSInt();
+		append(bnf.getSubtractProtocol(left, right, out));
+		return out;
+	}
+	
+	/**
 	 * Subtracts the righthand array of SInts element-wise from the lefthand
 	 * array. The righthand array must be at least as long as the lefthand
 	 * array.
@@ -510,7 +559,7 @@ public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 		endCurScope();
 		return out;
 	}
-
+	
 	/**
 	 * Computes the conditional selection operation. I.e., concretely computes
 	 * the value <code>r</code> as
@@ -582,5 +631,4 @@ public class NumericProtocolBuilder extends AbstractProtocolBuilder {
 	public void addProtocolProducer(ProtocolProducer gp) {
 		append(gp);
 	}
-	
 }

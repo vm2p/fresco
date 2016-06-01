@@ -29,6 +29,7 @@ package dk.alexandra.fresco.suite.spdz.utils;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
+import dk.alexandra.fresco.framework.ProtocolProducer;
 import dk.alexandra.fresco.framework.value.KnownSIntProtocol;
 import dk.alexandra.fresco.framework.value.OInt;
 import dk.alexandra.fresco.framework.value.SInt;
@@ -38,6 +39,7 @@ import dk.alexandra.fresco.lib.field.integer.CloseIntProtocol;
 import dk.alexandra.fresco.lib.field.integer.MultProtocol;
 import dk.alexandra.fresco.lib.field.integer.OpenIntProtocol;
 import dk.alexandra.fresco.lib.field.integer.SubtractProtocol;
+import dk.alexandra.fresco.lib.helper.builder.NumericProtocolBuilder;
 import dk.alexandra.fresco.lib.math.integer.PreprocessedNumericBitFactory;
 import dk.alexandra.fresco.lib.math.integer.exp.ExpFromOIntFactory;
 import dk.alexandra.fresco.lib.math.integer.exp.PreprocessedExpPipeFactory;
@@ -91,6 +93,7 @@ public class SpdzFactory implements BasicNumericFactory, PreprocessedNumericBitF
 	 * Careful - This creates a publicly known integer which is secret shared.
 	 */
 
+	@Override
 	public KnownSIntProtocol getSInt(int i, SInt si) {
 		return new SpdzKnownSIntProtocol(i, si);
 	}
@@ -98,6 +101,7 @@ public class SpdzFactory implements BasicNumericFactory, PreprocessedNumericBitF
 	/**
 	 * Careful - This creates a publicly known integer which is secret shared.
 	 */
+	@Override
 	public KnownSIntProtocol getSInt(BigInteger value, SInt sValue) {
 		return new SpdzKnownSIntProtocol(value, sValue);
 	}
@@ -127,8 +131,11 @@ public class SpdzFactory implements BasicNumericFactory, PreprocessedNumericBitF
 	}
 
 	@Override
-	public SInt getRandomSecretSharedBit() {
-		return this.storage.getSupplier().getNextBit();
+	public ProtocolProducer createRandomSecretSharedBitProtocol(SInt bit) {
+		SInt local = this.storage.getSupplier().getNextBit();
+		NumericProtocolBuilder builder = new NumericProtocolBuilder(this);
+		builder.copy(bit, local);
+		return builder.getProtocol();
 	}
 
 	@Override
@@ -188,6 +195,11 @@ public class SpdzFactory implements BasicNumericFactory, PreprocessedNumericBitF
 	}
 
 	@Override
+	public SubtractProtocol getSubtractProtocol(SInt a, OInt b, SInt out) {
+		return new SpdzSubtractProtocol(a, b, out, this);
+	}
+	
+	@Override
 	public MultProtocol getMultProtocol(SInt a, SInt b, SInt out) {
 		return new SpdzMultProtocol(a, b, out);
 	}
@@ -244,6 +256,7 @@ public class SpdzFactory implements BasicNumericFactory, PreprocessedNumericBitF
 	 * IO factory Stuff *
 	 ****************************************/
 
+	@Override
 	public CloseIntProtocol getCloseProtocol(BigInteger open,
 			SInt closed, int targetID) {
 		return new SpdzInputProtocol(open, closed, targetID);
