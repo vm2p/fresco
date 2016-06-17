@@ -242,6 +242,21 @@ public class NumericIOBuilder extends AbstractProtocolBuilder {
 			return input;
 		}
 	}
+	
+	/**
+	 * Appends a protocol to input a single OInt
+	 * 
+	 * @param i
+	 *            the OInt value
+	 * @param targetID
+	 *            the party to input
+	 * @return the SInt to be loaded with the input
+	 */
+	public SInt input(OInt i, int targetID) {
+		SInt si = sif.getSInt();
+		append(iof.getCloseProtocol(targetID, i, si));
+		return si;
+	}
 
 	/**
 	 * Appends a protocol to input a single BigInteger
