@@ -28,6 +28,7 @@ package dk.alexandra.fresco.lib.math.integer.exp;
 
 import dk.alexandra.fresco.framework.ProtocolProducer;
 import dk.alexandra.fresco.framework.value.SInt;
+import dk.alexandra.fresco.lib.debug.MarkerProtocolImpl;
 import dk.alexandra.fresco.lib.field.integer.BasicNumericFactory;
 import dk.alexandra.fresco.lib.helper.AbstractRoundBasedProtocol;
 import dk.alexandra.fresco.lib.helper.builder.NumericProtocolBuilder;
@@ -69,13 +70,13 @@ public class ExpSequenceProtocolImpl extends AbstractRoundBasedProtocol implemen
 		if (idx == 0) {
 			npb.beginParScope();
 			npb.copy(outputs[0], x);
-			npb.mult(outputs[1], x, x);
+			npb.mult(x, x, outputs[1]);
 			npb.endCurScope();	
 			idx = 2;
 		} else if (idx < outputs.length) {
 			npb.beginParScope();
 			for (int i = 0; i < idx && (idx + i) < outputs.length; i++) {
-				npb.mult(outputs[idx + i], outputs[i], outputs[idx]);
+				npb.mult(outputs[i], outputs[idx], outputs[idx + i]);
 			}
 			idx = idx << 1;
 			npb.endCurScope();
