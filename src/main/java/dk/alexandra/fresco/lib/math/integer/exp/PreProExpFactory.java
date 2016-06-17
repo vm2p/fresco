@@ -33,10 +33,12 @@ public class PreProExpFactory implements ExpFactory {
 
 	private PreprocessedExpPipeFactory preProExpPipeFactory;
 	private BasicNumericFactory bnFac;
+	private ExpFromOIntFactory oExpFac;
 	
-	public PreProExpFactory(PreprocessedExpPipeFactory preProExpPipeFactory, BasicNumericFactory bnFac) {
+	public PreProExpFactory(PreprocessedExpPipeFactory preProExpPipeFactory, BasicNumericFactory bnFac, ExpFromOIntFactory oExpFac) {
 		this.preProExpPipeFactory = preProExpPipeFactory;
 		this.bnFac = bnFac;
+		this.oExpFac = oExpFac;
 	}
 
 	@Override
@@ -47,7 +49,7 @@ public class PreProExpFactory implements ExpFactory {
 
 	@Override
 	public ExpSequenceProtocol getExpSequenceProtocol(SInt x, SInt[] powers) {
-		ExpSequenceProtocol esp = new MaskingExpSeqProtocol(x, powers, bnFac, this);
+		ExpSequenceProtocol esp = new MaskingExpSeqProtocol(x, powers, bnFac, this, oExpFac);
 		return esp;
 	}
 
