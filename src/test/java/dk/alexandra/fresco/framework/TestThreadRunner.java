@@ -69,7 +69,6 @@ public class TestThreadRunner {
 		@Override
 		public void run() {
 			try {
-				Reporter.init(Level.INFO);
 				setUp();
 				runTest();
 			} catch (Throwable e) {
@@ -122,7 +121,6 @@ public class TestThreadRunner {
 		}
 
 	}
-
 	
 	/**
 	 * Container for all the configuration that one thread should have.
@@ -142,8 +140,7 @@ public class TestThreadRunner {
 			return this.netConf.noOfParties();
 		}
 		
-	}
-	
+	}	
 
 	public abstract static class TestThreadFactory {
 		public abstract TestThread next(TestThreadConfiguration conf);

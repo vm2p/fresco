@@ -47,14 +47,22 @@ public class TestSCEConfiguration implements SCEConfiguration {
 	private int noOfVmThreads;
 	private ProtocolEvaluator evaluator;
 	private int maxBatchSize;
+	private Level logLevel;
 	
 	public TestSCEConfiguration(ProtocolSuite suite, ProtocolEvaluator evaluator,
 			int noOfThreads, int noOfvmThreads, NetworkConfiguration conf, Storage storage, boolean useSecureConn) {
 		this(suite, evaluator, noOfThreads, noOfvmThreads, conf, storage, useSecureConn, 4096);
 		
 	}
+	
 	public TestSCEConfiguration(ProtocolSuite suite, ProtocolEvaluator evaluator,
 			int noOfThreads, int noOfvmThreads, NetworkConfiguration conf, Storage storage, boolean useSecureConn, int maxBatchSize) {
+		this(suite, evaluator, noOfThreads, noOfvmThreads, conf, storage, useSecureConn, 4096, Level.INFO);
+	}
+	
+	public TestSCEConfiguration(ProtocolSuite suite, ProtocolEvaluator evaluator,
+			int noOfThreads, int noOfvmThreads, NetworkConfiguration conf, Storage storage, boolean useSecureConn, int maxBatchSize, Level logLevel) {
+		this.logLevel = logLevel;
 		this.protocolSuite = ProtocolSuite.protocolSuiteToString(suite);
 		this.storage = storage;
 		this.evaluator = evaluator;
@@ -74,6 +82,8 @@ public class TestSCEConfiguration implements SCEConfiguration {
 		}
 		this.maxBatchSize = maxBatchSize;
 	}
+	
+	
 
 	@Override
 	public int getMyId() {
@@ -87,7 +97,7 @@ public class TestSCEConfiguration implements SCEConfiguration {
 
 	@Override
 	public Level getLogLevel() {
-		return Level.INFO;
+		return logLevel;
 	}
 
 	@Override

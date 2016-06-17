@@ -58,7 +58,6 @@ public class TestScapiNetwork {
 		
 		@Override
 		public void setUp() {
-			Reporter.init(Level.INFO);
 			network = new ScapiNetworkImpl(conf.netConf, noOfChannels());
 		}
 
