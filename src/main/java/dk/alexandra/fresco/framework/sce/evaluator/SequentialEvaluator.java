@@ -107,8 +107,7 @@ public class SequentialEvaluator implements ProtocolEvaluator {
 	@Override
 	public void setMaxBatchSize(int maxBatchSize) {
 		this.maxBatchSize = maxBatchSize;
-	}
-	
+	}	
 	
 	private int doOneRound(ProtocolProducer c) throws IOException {
 		NativeProtocol[] nextProtocols = new NativeProtocol[maxBatchSize];
@@ -122,10 +121,12 @@ public class SequentialEvaluator implements ProtocolEvaluator {
 		int batch = 0;
 		int totalProtocols = 0;
 		int totalBatches = 0;
+		int maxBatch = 0;
 		int zeroBatches = 0;
 		do {
 			int numOfProtocolsInBatch = doOneRound(c);
-			Reporter.finest("Done evaluating batch: " + batch++ + " with " + numOfProtocolsInBatch + " native protocols");
+			maxBatch = (numOfProtocolsInBatch > maxBatch) ? numOfProtocolsInBatch : maxBatch;
+			Reporter.finest("Done evaluating batch: " + (batch++) + " with " + numOfProtocolsInBatch + " native protocols");
 			if (numOfProtocolsInBatch == 0) {
 				Reporter.finest("Batch " + batch + " is empty");
 			}
@@ -143,6 +144,10 @@ public class SequentialEvaluator implements ProtocolEvaluator {
 		} while (c.hasNextProtocols());
 		this.protocolSuite.finishedEval();
 		Reporter.fine("Sequential evaluator done. Evaluated a total of " + totalProtocols + " native protocols in " + totalBatches + " batches.");
+		Reporter.fine("Average batch size was " + totalProtocols/totalBatches);
+		Reporter.fine("The largest batch had " + maxBatch + " native protocols.");
+		Reporter.fine("There were " + zeroBatches + " empty batches.");
+		
 	}
 
 	/*
