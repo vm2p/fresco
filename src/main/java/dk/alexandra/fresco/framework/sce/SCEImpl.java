@@ -207,7 +207,7 @@ public class SCEImpl implements SCE {
 	@Override
 	public void runApplication(Application application) {
 		try {
-			Reporter.init(this.getSCEConfiguration().getLogLevel());			
+			//Reporter.init(this.getSCEConfiguration().getLogLevel());			
 			setup();
 			Reporter.info("Running application: " + application.getClass().getSimpleName() + " using protocol suite: "
 					+ this.getSCEConfiguration().getProtocolSuiteName());
