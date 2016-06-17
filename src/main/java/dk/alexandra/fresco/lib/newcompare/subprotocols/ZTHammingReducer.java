@@ -5,6 +5,7 @@ import dk.alexandra.fresco.framework.ProtocolProducer;
 import dk.alexandra.fresco.framework.value.OInt;
 import dk.alexandra.fresco.framework.value.SInt;
 import dk.alexandra.fresco.lib.compare.zerotest.ZeroTestReducerProtocol;
+import dk.alexandra.fresco.lib.debug.MarkerProtocolImpl;
 import dk.alexandra.fresco.lib.field.integer.BasicNumericFactory;
 import dk.alexandra.fresco.lib.helper.AbstractRoundBasedProtocol;
 import dk.alexandra.fresco.lib.helper.builder.NumericProtocolBuilder;
@@ -68,9 +69,9 @@ public class ZTHammingReducer extends AbstractRoundBasedProtocol implements Zero
 		switch (state) {
 		case LOAD_RAND:
 			rand = npb.getSInt();
-			Protocol maskPP = subFac.getZTMaskProtocol(rand, bitLength, securityParameter);
+			randBits = npb.getSIntArray(bitLength);
+			Protocol maskPP = subFac.getZTMaskProtocol(randBits, rand, securityParameter);
 			npb.addProtocolProducer(maskPP);
-			randBits = (SInt[]) maskPP.getOutputValues();
 			state = State.MASK;
 			break;
 		case MASK:
@@ -78,6 +79,7 @@ public class ZTHammingReducer extends AbstractRoundBasedProtocol implements Zero
 			state = State.OPEN;
 			break;
 		case OPEN:
+			mOpened = bnFac.getOInt();
 			npb.addProtocolProducer(bnFac.getOpenProtocol(mClosed, mOpened));
 			state = State.HAMMING;
 			break;
@@ -85,7 +87,7 @@ public class ZTHammingReducer extends AbstractRoundBasedProtocol implements Zero
 			npb.addProtocolProducer(subFac.getZTHammingDistanceProtocol(randBits, mOpened, reduced));
 			state = State.DONE;
 			break;
-		case DONE:
+		case DONE:			
 			return null;
 		default:
 			break;

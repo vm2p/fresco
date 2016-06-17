@@ -31,6 +31,7 @@ import java.math.BigInteger;
 import dk.alexandra.fresco.framework.ProtocolProducer;
 import dk.alexandra.fresco.framework.value.OInt;
 import dk.alexandra.fresco.framework.value.SInt;
+import dk.alexandra.fresco.lib.debug.MarkerProtocolImpl;
 import dk.alexandra.fresco.lib.field.integer.BasicNumericFactory;
 import dk.alexandra.fresco.lib.helper.AbstractRoundBasedProtocol;
 import dk.alexandra.fresco.lib.helper.builder.NumericProtocolBuilder;
@@ -102,10 +103,11 @@ public class ZTHammingDistance extends AbstractRoundBasedProtocol implements Ham
 			state = State.SUM;
 		case SUM: // Sum the XOR bits
 			SInt sum = npb.sum(xs);
-			npb.copy(h, sum);
+			npb.copy(h, sum);	
 			state = State.DONE;
 			break;
 		case DONE:
+			
 			return null;
 		default:
 			break;

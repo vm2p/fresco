@@ -12,13 +12,14 @@ import dk.alexandra.fresco.lib.field.integer.BasicNumericFactory;
 import dk.alexandra.fresco.lib.math.integer.HammingDistanceProtocol;
 import dk.alexandra.fresco.lib.math.integer.PreprocessedNumericBitFactory;
 import dk.alexandra.fresco.lib.math.integer.exp.ExpFactory;
+import dk.alexandra.fresco.lib.math.integer.exp.ExpFromOIntFactory;
 
 public class ComparisonSubProtocolFactoryImpl implements ComparisonSubProtocolFactory {
 	
 	private MiscOIntGenerators miscGen;
 	private BasicNumericFactory bnFac;
 	private ExpFactory expFac;
-	private PreprocessedNumericBitFactory pnbFac;	
+	private PreprocessedNumericBitFactory pnbFac;
 	
 	/**
 	 * Constructs an factory for the subprotocols used in comparisons.
@@ -33,6 +34,7 @@ public class ComparisonSubProtocolFactoryImpl implements ComparisonSubProtocolFa
 		this.bnFac = bnFac;
 		this.expFac = expFac;
 		this.pnbFac = pnbFac;
+		this.miscGen = new MiscOIntGenerators(bnFac);
 	}
 
 	@Override
@@ -54,9 +56,9 @@ public class ComparisonSubProtocolFactoryImpl implements ComparisonSubProtocolFa
 	}
 
 	@Override
-	public RandomAdditiveMaskProtocol getZTMaskProtocol(SInt mask, int bitLength, int securityParameter) {
+	public RandomAdditiveMaskProtocol getZTMaskProtocol(SInt[] bits, SInt mask, int securityParameter) {
 		RandomAdditiveMaskFactory ramf = new RandomAdditiveMaskFactoryImpl(bnFac, pnbFac);
-		RandomAdditiveMaskProtocol ramp = ramf.getRandomAdditiveMaskProtocol(bitLength, securityParameter, mask);
+		RandomAdditiveMaskProtocol ramp = ramf.getRandomAdditiveMaskProtocol(securityParameter, bits, mask);
 		return ramp;
 	}
 

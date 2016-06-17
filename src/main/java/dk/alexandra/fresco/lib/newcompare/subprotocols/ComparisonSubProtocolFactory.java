@@ -15,6 +15,6 @@ public interface ComparisonSubProtocolFactory extends ProtocolFactory {
 	public HammingDistanceProtocol getZTHammingDistanceProtocol(SInt[] xs, OInt y, SInt result);
 	
 	public ZeroTestBruteforceProtocol getZTBruteForceProtocol(SInt x, SInt result, int max);
-	
-	public RandomAdditiveMaskProtocol getZTMaskProtocol(SInt mask, int bitLength, int securityParameter);
+
+	public RandomAdditiveMaskProtocol getZTMaskProtocol(SInt[] bits, SInt mask, int securityParameter);
 }

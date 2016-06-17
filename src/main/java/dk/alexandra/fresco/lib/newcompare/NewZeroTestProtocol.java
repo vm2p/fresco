@@ -3,7 +3,10 @@ package dk.alexandra.fresco.lib.newcompare;
 import dk.alexandra.fresco.framework.ProtocolProducer;
 import dk.alexandra.fresco.framework.value.SInt;
 import dk.alexandra.fresco.lib.compare.zerotest.ZeroTestProtocol;
+import dk.alexandra.fresco.lib.field.integer.BasicNumericFactory;
 import dk.alexandra.fresco.lib.helper.AbstractRoundBasedProtocol;
+import dk.alexandra.fresco.lib.helper.sequential.SequentialProtocolProducer;
+import dk.alexandra.fresco.lib.lp.OpenAndPrintProtocol;
 import dk.alexandra.fresco.lib.newcompare.subprotocols.ComparisonSubProtocolFactory;
 
 /**
@@ -20,12 +23,11 @@ public class NewZeroTestProtocol extends AbstractRoundBasedProtocol implements Z
 	private enum State {
 		REDUCE, SOLVE_REDUCED, DONE
 	}
-	private SInt x, reduced, result;
+	private SInt x, result;
 	private ComparisonSubProtocolFactory subFactory;
 	private State state = State.REDUCE;
 	private int securityParameter, bitLength;
-	
-	
+	private BasicNumericFactory bnFac;
 	
 	/**
 	 * Constructs a protocol testing a value for zero
@@ -36,27 +38,26 @@ public class NewZeroTestProtocol extends AbstractRoundBasedProtocol implements Z
 	 * @param subFactory a factory for the involved subprotocols
 	 */
 	public NewZeroTestProtocol(SInt x, SInt result, int bitLength, int securityParameter,
-			ComparisonSubProtocolFactory subFactory) {
+			ComparisonSubProtocolFactory subFactory, BasicNumericFactory bnFac) {
 		super();
 		this.x = x;
 		this.result = result;
 		this.bitLength = bitLength;
 		this.securityParameter = securityParameter;
 		this.subFactory = subFactory;
+		this.bnFac = bnFac;
 	}
-
-
 
 	@Override
 	public ProtocolProducer nextProtocolProducer() {
 		ProtocolProducer pp = null;
 		switch (state) {
 		case REDUCE:
-			pp = subFactory.getZTReducerProtocol(x, reduced, bitLength, securityParameter);
+			pp = subFactory.getZTReducerProtocol(x, result, bitLength, securityParameter);
 			state = State.SOLVE_REDUCED;
 			break;
 		case SOLVE_REDUCED:
-			pp = subFactory.getZTBruteForceProtocol(reduced, result, bitLength);
+			pp = subFactory.getZTBruteForceProtocol(result, result, bitLength);
 			state = State.DONE;
 			break;
 		case DONE:

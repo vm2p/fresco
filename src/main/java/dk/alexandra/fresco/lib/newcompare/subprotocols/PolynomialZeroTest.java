@@ -33,9 +33,11 @@ import dk.alexandra.fresco.framework.value.OInt;
 import dk.alexandra.fresco.framework.value.SInt;
 import dk.alexandra.fresco.lib.compare.MiscOIntGenerators;
 import dk.alexandra.fresco.lib.compare.zerotest.ZeroTestBruteforceProtocol;
+import dk.alexandra.fresco.lib.debug.MarkerProtocolImpl;
 import dk.alexandra.fresco.lib.field.integer.BasicNumericFactory;
 import dk.alexandra.fresco.lib.helper.AbstractRoundBasedProtocol;
 import dk.alexandra.fresco.lib.helper.builder.NumericProtocolBuilder;
+import dk.alexandra.fresco.lib.lp.OpenAndPrintProtocol;
 import dk.alexandra.fresco.lib.math.integer.exp.ExpFactory;
 import dk.alexandra.fresco.lib.math.integer.linalg.InnerProductFactory;
 import dk.alexandra.fresco.lib.math.integer.linalg.InnerProductFactoryImpl;
@@ -96,7 +98,6 @@ public class PolynomialZeroTest extends AbstractRoundBasedProtocol implements Ze
 		this.bnFac = bnFac;
 	}
 
-
 	@Override
 	public ProtocolProducer nextProtocolProducer() {
 		NumericProtocolBuilder npb = new NumericProtocolBuilder(bnFac);
@@ -109,10 +110,10 @@ public class PolynomialZeroTest extends AbstractRoundBasedProtocol implements Ze
 			state = State.EVAL_POLY;
 			break;
 		case EVAL_POLY:
-			OInt[] coeffs = Arrays.copyOfRange(miscGen.getPoly(powers.length), 1, powers.length + 1);
+			OInt[] coeffs = miscGen.getPoly(max);
 			InnerProductFactory ipf = new InnerProductFactoryImpl(bnFac);
-			npb.addProtocolProducer(ipf.getInnerProductProtocol(powers, coeffs, result));
-			npb.add(result, result, coeffs[0]);
+			npb.addProtocolProducer(ipf.getInnerProductProtocol(powers, Arrays.copyOfRange(coeffs, 1, powers.length + 1), result));
+			npb.add(result, coeffs[0], result);
 			state = State.DONE;
 			break;
 		case DONE:
