@@ -68,11 +68,9 @@ public enum EvaluationStrategy {
 			return SEQUENTIAL.name();
 		} else if(evaluator instanceof ParallelEvaluator) {
 			return PARALLEL.name();
-		}
-		else if(evaluator instanceof BatchedSequentialEvaluator) {
+		} else if(evaluator instanceof BatchedSequentialEvaluator) {
 			return SEQUENTIAL_BATCHED.name();
-		}
-		else if(evaluator instanceof BatchedParallelEvaluator) {
+		} else if(evaluator instanceof BatchedParallelEvaluator) {
 			return PARALLEL_BATCHED.name();
 		} else {
 			throw new ConfigurationException("Unrecognized evaluation strategy:" + evaluator.toString());
