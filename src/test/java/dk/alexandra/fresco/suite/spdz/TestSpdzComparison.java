@@ -47,6 +47,7 @@ import dk.alexandra.fresco.framework.sce.evaluator.EvaluationStrategy;
 import dk.alexandra.fresco.framework.sce.resources.storage.InMemoryStorage;
 import dk.alexandra.fresco.framework.sce.resources.storage.StorageStrategy;
 import dk.alexandra.fresco.lib.arithmetic.ComparisonTests;
+import dk.alexandra.fresco.lib.arithmetic.NewComparisonTests;
 import dk.alexandra.fresco.suite.ProtocolSuite;
 import dk.alexandra.fresco.suite.spdz.configuration.SpdzConfiguration;
 import dk.alexandra.fresco.suite.spdz.configuration.SpdzConfigurationFromProperties;
@@ -59,8 +60,11 @@ public class TestSpdzComparison {
 	private void runTest(TestThreadFactory f, EvaluationStrategy evalStrategy,
 			StorageStrategy storageStrategy) throws Exception {
 		Level logLevel = Level.FINE;
-		Reporter.init(logLevel);
-
+		runTest(f, evalStrategy, storageStrategy, logLevel);
+	}
+	
+	private void runTest(TestThreadFactory f, EvaluationStrategy evalStrategy,
+			StorageStrategy storageStrategy, Level logLevel) throws Exception {
 		// Since SCAPI currently does not work with ports > 9999 we use fixed
 		// ports
 		// here instead of relying on ephemeral ports which are often > 9999.
@@ -75,16 +79,14 @@ public class TestSpdzComparison {
 		for (int playerId : netConf.keySet()) {
 			TestThreadConfiguration ttc = new TestThreadConfiguration();
 			ttc.netConf = netConf.get(playerId);
-
 			// This fixes parameters, e.g., security parameter 80 is always
 			// used.
 			// To run tests with varying parameters, do as in the BGW case with
 			// different thresholds.
 			SpdzConfiguration spdzConf = new SpdzConfigurationFromProperties();
 			ttc.protocolSuiteConf = spdzConf;
-			boolean useSecureConnection = false; // No tests of secure
-													// connection
-													// here.
+			// No tests of secure connection here.
+			boolean useSecureConnection = false; 
 			int noOfVMThreads = 3;
 			int noOfThreads = 3;
 			ProtocolSuite suite = SpdzProtocolSuite.getInstance(playerId);
@@ -100,7 +102,9 @@ public class TestSpdzComparison {
 			}
 			ttc.sceConf = new TestSCEConfiguration(suite, evaluator,
 					noOfThreads, noOfVMThreads, ttc.netConf, storage,
-					useSecureConnection);
+					useSecureConnection, 4096, logLevel);
+			System.out.println(logLevel);
+			System.out.println(ttc.sceConf.getLogLevel());
 			conf.put(playerId, ttc);
 		}
 		TestThreadRunner.run(f, conf);
@@ -114,11 +118,6 @@ public class TestSpdzComparison {
 	 */
 	@BeforeClass
 	public static void initStorage() {
-		Reporter.init(Level.INFO);
-		// dk.alexandra.fresco.framework.sce.resources.storage.Storage[]
-		// storages = new
-		// dk.alexandra.fresco.framework.sce.resources.storage.Storage[] {
-		// inMemStore, mySQLStore };
 		dk.alexandra.fresco.framework.sce.resources.storage.Storage[] storages = new dk.alexandra.fresco.framework.sce.resources.storage.Storage[] { inMemStore };
 		InitializeStorage.initStorage(storages, noOfParties, 10000, 1000,
 				100000, 100);
@@ -133,6 +132,18 @@ public class TestSpdzComparison {
 	@Test
 	public void test_compareEQ_Sequential() throws Exception {
 		runTest(new ComparisonTests.TestCompareEQ(),
+				EvaluationStrategy.SEQUENTIAL, StorageStrategy.IN_MEMORY);
+	}
+	
+	@Test
+	public void test_newCompareEQ_Sequential() throws Exception {
+		runTest(new NewComparisonTests.TestCompareEQ(),
+				EvaluationStrategy.SEQUENTIAL, StorageStrategy.IN_MEMORY);
+	}
+	
+	@Test
+	public void test_newZeroTest_Sequential() throws Exception {
+		runTest(new NewComparisonTests.TestZeroTest(),
 				EvaluationStrategy.SEQUENTIAL, StorageStrategy.IN_MEMORY);
 	}
 	

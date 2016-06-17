@@ -164,14 +164,15 @@ public class ComparisonTests {
 							SInt x = ioBuilder.input(three, 1);
 							SInt y = ioBuilder.input(five, 1);
 							seq.append(ioBuilder.getProtocol());
-							
+							compBuilder.beginParScope();
 							SInt compResult1 = compBuilder.compareEqual(x, x);
 							SInt compResult2 = compBuilder.compareEqual(x, y);
+							compBuilder.endCurScope();
+							ioBuilder.addProtocolProducer(compBuilder.getProtocol());
 							OInt res1 = ioBuilder.output(compResult1);
 							OInt res2 = ioBuilder.output(compResult2);
 							outputs = new OInt[] {res1, res2};
 							
-							seq.append(compBuilder.getProtocol());
 							seq.append(ioBuilder.getProtocol());
 							
 							return seq;
