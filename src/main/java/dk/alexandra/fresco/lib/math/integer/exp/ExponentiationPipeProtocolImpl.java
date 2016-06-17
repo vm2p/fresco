@@ -60,13 +60,13 @@ public class ExponentiationPipeProtocolImpl extends AbstractRoundBasedProtocol i
 			npb.beginParScope();
 			npb.addProtocolProducer(invFactory.getInversionProtocol(r, outputs[0]));
 			npb.copy(outputs[1], r);
-			npb.mult(outputs[2], r, r);
+			npb.mult(r, r, outputs[2]);
 			npb.endCurScope();	
 			state = 2;
 		} else if (state < outputs.length) {
 			npb.beginParScope();
 			for (int i = 1; i <= state && (state + i) < outputs.length; i++) {
-				npb.mult(outputs[state + i], outputs[i], outputs[state]);
+				npb.mult(outputs[i], outputs[state], outputs[state + i]);
 			}
 			state = state << 1;
 			npb.endCurScope();
