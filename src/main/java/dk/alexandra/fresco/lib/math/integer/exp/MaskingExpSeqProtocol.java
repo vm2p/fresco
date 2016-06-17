@@ -60,6 +60,7 @@ public class MaskingExpSeqProtocol extends AbstractRoundBasedProtocol implements
 	private State state = State.LOAD_RAND;
 	private ExpFactory expFac;
 	private BasicNumericFactory bnFac;
+	private ExpFromOIntFactory oExpFac;
 	private SInt x;
 	private SInt[] powers, randPowers;
 	private OInt m;
@@ -77,10 +78,12 @@ public class MaskingExpSeqProtocol extends AbstractRoundBasedProtocol implements
 	 * @param expFac
 	 *            a factory for random exponentiation sequences
 	 */
-	public MaskingExpSeqProtocol(SInt x, SInt[] powers, BasicNumericFactory bnFac, ExpFactory expFac) {
+	public MaskingExpSeqProtocol(SInt x, SInt[] powers, BasicNumericFactory bnFac, ExpFactory expFac, ExpFromOIntFactory oExpFac) {
+		this.x = x;
 		this.powers = powers;
 		this.bnFac = bnFac;
 		this.expFac = expFac;
+		this.oExpFac = oExpFac;
 		this.state = State.LOAD_RAND;
 	}
 
@@ -102,11 +105,12 @@ public class MaskingExpSeqProtocol extends AbstractRoundBasedProtocol implements
 	 *            a factory for random exponentiation sequences
 	 */
 
-	public MaskingExpSeqProtocol(SInt x, SInt[] randPowers, SInt[] powers, BasicNumericFactory bnFac) {
+	public MaskingExpSeqProtocol(SInt x, SInt[] randPowers, SInt[] powers, BasicNumericFactory bnFac, ExpFromOIntFactory oExpFac) {
 		this.x = x;
 		this.powers = powers;
 		this.randPowers = randPowers;
 		this.bnFac = bnFac;
+		this.oExpFac = oExpFac;
 		this.state = State.MASK;
 		if (powers.length + 1 != randPowers.length) {
 			throw new IllegalArgumentException("Lengths does not match. The random exponentiation sequence "
@@ -119,7 +123,7 @@ public class MaskingExpSeqProtocol extends AbstractRoundBasedProtocol implements
 		NumericProtocolBuilder npb = new NumericProtocolBuilder(bnFac);
 		switch (state) {
 		case LOAD_RAND:
-			randPowers = new SInt[powers.length + 1];
+			randPowers = npb.getSIntArray(powers.length + 1);
 			npb.addProtocolProducer(expFac.getExponentiationProtocol(randPowers));
 			state = State.MASK;
 			break;
@@ -132,12 +136,12 @@ public class MaskingExpSeqProtocol extends AbstractRoundBasedProtocol implements
 		case UNMASK:
 			BigInteger value = m.getValue();
 			npb.beginParScope();
+			OInt oval = bnFac.getOInt(value);
+			OInt[] oPowers = oExpFac.getExpFromOInt(oval, powers.length);
 			npb.copy(powers[0], x);
 			for (int i = 1; i < powers.length; i++) {
-				value = value.multiply(value);
-				OInt o = bnFac.getOInt(value);
-				npb.addProtocolProducer(bnFac.getMultProtocol(o, randPowers[i], powers[i]));
-			}
+				npb.addProtocolProducer(bnFac.getMultProtocol(oPowers[i], randPowers[i + 1], powers[i]));
+			}			
 			npb.endCurScope();
 			state = State.DONE;
 			break;
