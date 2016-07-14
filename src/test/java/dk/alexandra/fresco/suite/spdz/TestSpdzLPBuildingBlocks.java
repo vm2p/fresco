@@ -138,7 +138,7 @@ public class TestSpdzLPBuildingBlocks {
 		// Storage[] storages = new Storage[] { inMemStore, mySQLStore };
 		Storage[] storages = new Storage[] { inMemStore };
 		InitializeStorage.initStorage(storages, noOfParties, 10000, 10000,
-				1000000, 10000);
+				1000000, 10000, 0);
 	}	
 	
 	@Test

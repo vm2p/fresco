@@ -142,7 +142,7 @@ public class TestSpdzBasicArithmetic2Parties {
 		// Storage[] storages = new Storage[] { inMemStore, mySQLStore };
 		Storage[] storages = new Storage[] { inMemStore };
 		InitializeStorage.initStorage(storages, noOfParties, 1000, 100,
-				1000, 10);
+				1000, 10, 0);
 	}
 	
 	@Test
@@ -251,7 +251,7 @@ public class TestSpdzBasicArithmetic2Parties {
 		mySQLStore = MySQLStorage.getInstance();
 		Storage[] storages = new Storage[] { mySQLStore };
 		InitializeStorage.initStorage(storages, noOfParties, 1000, 100,
-				1000, 10);
+				1000, 10, 0);
 
 		runTest(new BasicArithmeticTests.TestLotsOfInputs(),
 				EvaluationStrategy.SEQUENTIAL_BATCHED, StorageStrategy.MYSQL);

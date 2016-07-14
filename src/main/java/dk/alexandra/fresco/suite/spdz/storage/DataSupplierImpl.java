@@ -30,6 +30,7 @@ import java.math.BigInteger;
 
 import dk.alexandra.fresco.framework.MPCException;
 import dk.alexandra.fresco.framework.sce.resources.storage.StreamedStorage;
+import dk.alexandra.fresco.framework.value.SInt;
 import dk.alexandra.fresco.suite.spdz.datatypes.SpdzInputMask;
 import dk.alexandra.fresco.suite.spdz.datatypes.SpdzSInt;
 import dk.alexandra.fresco.suite.spdz.datatypes.SpdzTriple;
@@ -141,5 +142,14 @@ public class DataSupplierImpl implements DataSupplier {
 			throw new MPCException("SSK was not present in the storage "+ storageName);
 		}
 		return this.ssk;
+	}
+
+	@Override
+	public SpdzSInt[] getNextPerm() {
+		SpdzSInt[] perm = this.storage.getNext(storageName+SpdzStorageConstants.PERM_STORAGE);
+		if(perm == null){
+			throw new MPCException("No more permutations was available in the storage");
+		}
+		return perm;
 	}
 }

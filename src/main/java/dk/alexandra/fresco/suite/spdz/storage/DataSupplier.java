@@ -72,4 +72,10 @@ public interface DataSupplier {
 	 */
 	public abstract BigInteger getSSK();
 
+	/**
+	 * Supplies the next permutation triple
+	 * @return the next permutation triple
+	 */
+	public abstract SpdzSInt[] getNextPerm();
+
 }

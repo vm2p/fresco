@@ -161,7 +161,7 @@ public class TestSpdzLPSolver2Parties {
 	@Test
 	public void test_LPSolver_2_Sequential_streamed() throws Exception {
 		int noOfThreads = 1;
-		InitializeStorage.initStreamedStorage(new StreamedStorage[] {streamedStorage}, 2, noOfThreads, 10000, 1000, 500000, 2000);
+		InitializeStorage.initStreamedStorage(new StreamedStorage[] {streamedStorage}, 2, noOfThreads, 10000, 1000, 500000, 2000, 0);
 		runTest(new LPSolverTests.TestLPSolver(), 2, noOfThreads,
 				EvaluationStrategy.SEQUENTIAL, StorageStrategy.STREAMED_STORAGE, false);
 	}
@@ -169,7 +169,7 @@ public class TestSpdzLPSolver2Parties {
 	@Test
 	public void test_LPSolver_2_Parallel_streamed() throws Exception {
 		int noOfThreads = 2;		
-		InitializeStorage.initStreamedStorage(new StreamedStorage[] {streamedStorage}, 2, noOfThreads, 10000, 1000, 500000, 2000);
+		InitializeStorage.initStreamedStorage(new StreamedStorage[] {streamedStorage}, 2, noOfThreads, 10000, 1000, 500000, 2000, 0);
 		runTest(new LPSolverTests.TestLPSolver(), 2, noOfThreads,
 				EvaluationStrategy.PARALLEL, StorageStrategy.STREAMED_STORAGE, false);
 	}
@@ -177,7 +177,7 @@ public class TestSpdzLPSolver2Parties {
 	@Test
 	public void test_LPSolver_2_ParallelBatched_streamed() throws Exception {
 		int noOfThreads = 2;		
-		InitializeStorage.initStreamedStorage(new StreamedStorage[] {streamedStorage}, 2, noOfThreads, 10000, 1000, 500000, 2000);
+		InitializeStorage.initStreamedStorage(new StreamedStorage[] {streamedStorage}, 2, noOfThreads, 10000, 1000, 500000, 2000, 0);
 		runTest(new LPSolverTests.TestLPSolver(), 2, noOfThreads,
 				EvaluationStrategy.PARALLEL_BATCHED, StorageStrategy.STREAMED_STORAGE, false);
 	}
@@ -185,7 +185,7 @@ public class TestSpdzLPSolver2Parties {
 	@Test
 	public void test_LPSolver_2_SequentialBatched_streamed() throws Exception {
 		int noOfThreads = 2;		
-		InitializeStorage.initStreamedStorage(new StreamedStorage[] {streamedStorage}, 2, noOfThreads, 10000, 1000, 500000, 2000);
+		InitializeStorage.initStreamedStorage(new StreamedStorage[] {streamedStorage}, 2, noOfThreads, 10000, 1000, 500000, 2000, 0);
 		runTest(new LPSolverTests.TestLPSolver(), 2, noOfThreads,
 				EvaluationStrategy.SEQUENTIAL_BATCHED, StorageStrategy.STREAMED_STORAGE, false);
 	}

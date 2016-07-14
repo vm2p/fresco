@@ -50,7 +50,7 @@ public class InitializeStorage {
 	 * @param noOfBits
 	 */
 	public static void initStorage(Storage[] stores, int noOfPlayers, int noOfTriples, int noOfInputMasks, int noOfBits,
-			int noOfExpPipes) {
+			int noOfExpPipes, int noOfPermutations) {
 
 		List<Storage> tmpStores = new ArrayList<Storage>();
 		for (Storage s : stores) {
@@ -74,7 +74,8 @@ public class InitializeStorage {
 		List<List<SpdzInputMask[]>> inputMasks = FakeTripGen.generateInputMasks(noOfInputMasks, noOfPlayers, p, alpha);
 		List<SpdzSInt[]> bits = FakeTripGen.generateBits(noOfBits, noOfPlayers, p, alpha);
 		List<SpdzSInt[][]> expPipes = FakeTripGen.generateExpPipes(noOfExpPipes, noOfPlayers, p, alpha);
-
+		List<SpdzSInt[][]> permutations = FakeTripGen.generatePermutationShares(noOfPermutations, noOfPlayers, p, alpha, FakeTripGen.PERM_ROWS, FakeTripGen.PERM_COLS);
+		
 		for (Storage store : storages) {
 			for (int i = 1; i < noOfPlayers + 1; i++) {
 				String storageName = SpdzStorageConstants.STORAGE_NAME_PREFIX + i;
@@ -127,11 +128,22 @@ public class InitializeStorage {
 				}
 				expCounter++;
 			}
+			
+			//Permutations
+			int permCounter = 0; 
+			for(SpdzSInt[][] perm : permutations){
+				for(int i = 0; i < noOfPlayers; i++){
+					String storageName = SpdzStorageConstants.STORAGE_NAME_PREFIX + (i + 1);
+					String key = SpdzStorageConstants.PERM_KEY_PREFIX + permCounter;
+					store.putObject(storageName, key, perm[i]);
+				}
+				permCounter++;
+			}
 		}
 	}
 
 	public static void initStreamedStorage(StreamedStorage[] streamedStorages, int noOfPlayers, int noOfThreads,
-			int noOfTriples, int noOfInputMasks, int noOfBits, int noOfExpPipes) {
+			int noOfTriples, int noOfInputMasks, int noOfBits, int noOfExpPipes, int noOfPermutations) {
 		List<Storage> tmpStores = new ArrayList<Storage>();
 		for (StreamedStorage s : streamedStorages) {
 			try {
@@ -169,6 +181,7 @@ public class InitializeStorage {
 		List<List<SpdzInputMask[]>> inputMasks = FakeTripGen.generateInputMasks(noOfInputMasks, noOfPlayers, p, alpha);
 		List<SpdzSInt[]> bits = FakeTripGen.generateBits(noOfBits, noOfPlayers, p, alpha);
 		List<SpdzSInt[][]> expPipes = FakeTripGen.generateExpPipes(noOfExpPipes, noOfPlayers, p, alpha);
+		List<SpdzSInt[][]> permutations = FakeTripGen.generatePermutationShares(noOfPermutations, noOfPlayers, p, alpha, FakeTripGen.PERM_ROWS, FakeTripGen.PERM_COLS);
 
 		for (StreamedStorage store : storages) {
 			for (int i = 1; i < noOfPlayers + 1; i++) {
@@ -218,6 +231,17 @@ public class InitializeStorage {
 					for (int threadId = 0; threadId < noOfThreads; threadId++) {
 						String storageName = SpdzStorageConstants.STORAGE_NAME_PREFIX + noOfThreads+"_"+ (i + 1) + "_" + threadId+"_";
 						store.putNext(storageName + SpdzStorageConstants.EXP_PIPE_STORAGE, expPipe[i]);
+					}
+				}
+			}
+			
+			//Permutations
+			for(SpdzSInt[][] perm : permutations){
+				for(int i = 0; i < noOfPlayers; i++){
+					for (int threadId = 0; threadId < noOfThreads; threadId++) {
+						String storageName = SpdzStorageConstants.STORAGE_NAME_PREFIX + noOfThreads+"_"+ (i + 1) + "_" + threadId+"_";
+						store.putNext(storageName+SpdzStorageConstants.PERM_STORAGE, perm[i]);
+						System.out.println("Put something in the store: " + storageName+SpdzStorageConstants.PERM_STORAGE);
 					}
 				}
 			}

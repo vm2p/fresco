@@ -132,7 +132,7 @@ public class TestSpdzBasicArithmetic3Parties {
 		// inMemStore, mySQLStore };
 		dk.alexandra.fresco.framework.sce.resources.storage.Storage[] storages = new dk.alexandra.fresco.framework.sce.resources.storage.Storage[] { inMemStore };
 		InitializeStorage.initStorage(storages, noOfParties, 100000, 100000,
-				100000, 10);
+				100000, 10, 0);
 	}
 
 	@Test

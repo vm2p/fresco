@@ -66,6 +66,7 @@ public class FakeTripGen {
 	private static int numberOfBits;
 	private static int numberOfInputs;
 	private static int numberOfExps;
+	private static int numberOfPermutations;
 
 	private static String triplesFilename = "Triples-p-P";
 	private static String expPipeFilename = "Exp-pipe-p-P";
@@ -74,6 +75,11 @@ public class FakeTripGen {
 	// "Squares-p-P";
 	private static String inputsFilename = "Inputs-p-P";
 	private static String bitsFilename = "Bits-p-P";
+	private static String permFilename = "Perm-p-P";
+	
+	//TODO: Should be moved to a configuration somewhere.
+	public static int PERM_ROWS = 100;
+	public static int PERM_COLS = 42;
 
 	private static final StandardOpenOption WRITE = StandardOpenOption.WRITE;
 	private static final StandardOpenOption CREATE = StandardOpenOption.CREATE;
@@ -309,7 +315,98 @@ public class FakeTripGen {
 		}
 		return alphaShares;
 	}
+	
+	/**
+	 * Returns a list where the length of the list equals the amount wanted. 
+	 * The list contains a double array, where the first array's length is 
+	 * the number of players, and the second array is shares of the permutation itself. 
+	 * @param amount
+	 * @param noOfParties
+	 * @param modulus
+	 * @param alpha
+	 * @param rows
+	 * @param columns
+	 * @return
+	 */
+	public static List<SpdzSInt[][]> generatePermutationShares(int amount, int noOfParties, BigInteger modulus, BigInteger alpha, int rows, int columns) {
+		FakeTripGen.rand = new Random();
+		FakeTripGen.alpha = alpha;
+		FakeTripGen.mod = modulus;
+		List<SpdzSInt[][]> res = new ArrayList<>();
+		Integer[] counters = new Integer[noOfParties];	
+		
+		for (int k = 0; k < amount; k++) {
+			BigInteger[][] R = new BigInteger[rows][columns];
+			SpdzSInt[][] permutations = new SpdzSInt[noOfParties][rows*columns*2+rows*rows];
+			for(int i = 0; i < noOfParties; i++){
+				counters[i] = 0;
+			}
+			for (int i = 0; i < rows; i++) {
+				for (int j = 0; j < columns; j++) {
+					R[i][j] = sample();					
+					BigInteger mac = getMac(R[i][j]);
+					List<SpdzElement> elements = toShares(R[i][j], mac, noOfParties);
+					for(int inx = 0; inx < noOfParties; inx++){
+						//res.get(inx)[counters.get(inx)] = new SpdzSInt(elements.get(inx));
+						permutations[inx][counters[inx]] = new SpdzSInt(elements.get(inx));
+						counters[inx] = counters[inx]+1;
+					}
+				}
+			}
+			
+			int[] permutation = new int[rows];
+			for (int i = 0; i < rows; i++) {
+				permutation[i] = i;
+			}
+			
+			for (int i = 0; i < rows; i++) {
+				int j = rand.nextInt(rows - i) + i;
+				int temp = permutation[j];
+				permutation[j] = permutation[i];
+				permutation[i] = temp;
+			}
+			
+			for (int i = 0; i < rows; i++) {
+				int perm = permutation[i];
+				for (int j = 0; j < rows; j++) {
+					if (perm == j) {
+						BigInteger mac = getMac(BigInteger.ONE);
+						List<SpdzElement> elements = toShares(BigInteger.ONE, mac, noOfParties);
+						for(int inx = 0; inx < noOfParties; inx++){
+							//res.get(inx)[counters.get(inx)] = new SpdzSInt(elements.get(inx));
+							permutations[inx][counters[inx]] = new SpdzSInt(elements.get(inx));
+							counters[inx] = counters[inx]+1;
+						}						
+					} else {
+						BigInteger mac = getMac(BigInteger.ZERO);
+						List<SpdzElement> elements = toShares(BigInteger.ZERO, mac, noOfParties);
+						for(int inx = 0; inx < noOfParties; inx++){
+							//res.get(inx)[counters.get(inx)] = new SpdzSInt(elements.get(inx));
+							permutations[inx][counters[inx]] = new SpdzSInt(elements.get(inx));
+							counters[inx] = counters[inx]+1;
+						}
+					}
 
+				}
+			}
+
+			for (int i = 0; i < rows; i++) {
+				int perm = permutation[i];
+				for (int j = 0; j < columns; j++) {
+					BigInteger mac = getMac(R[perm][j]);
+					List<SpdzElement> elements = toShares(R[perm][j], mac, noOfParties);
+					for(int inx = 0; inx < noOfParties; inx++){
+						//res.get(inx)[counters.get(inx)] = new SpdzSInt(elements.get(inx)); 
+						permutations[inx][counters[inx]] = new SpdzSInt(elements.get(inx));
+						counters[inx] = counters[inx]+1;
+					}
+				}
+			}
+			res.add(permutations);
+		}
+		return res;
+	}
+	
 	/**
 	 * Generates offline data and writes it to a file according to the given
 	 * arguments. The needed arguments should be explained by running the method
@@ -455,6 +552,59 @@ public class FakeTripGen {
 		return true;
 	}
 
+	private void writePermutations() throws IOException {
+		int rows = PERM_ROWS;
+		int columns = PERM_COLS;
+		List<FileChannel> channels = new LinkedList<FileChannel>();
+		for (int i = 0; i < numberOfParties; i++) {
+			File f = new File(permFilename + i);
+			FileOutputStream fos = new FileOutputStream(f);
+			FileChannel fc = fos.getChannel();
+			channels.add(fc);
+		}
+		for (int k = 0; k < numberOfPermutations; k++) {
+			BigInteger[][] R = new BigInteger[rows][columns];
+
+			for (int i = 0; i < rows; i++) {
+				for (int j = 0; j < columns; j++) {
+					R[i][j] = sample();
+					writeAsShared(R[i][j], channels);
+				}
+			}
+			
+			int[] permutation = new int[rows];
+			for (int i = 0; i < rows; i++) {
+				permutation[i] = i;
+			}
+			
+			for (int i = 0; i < rows; i++) {
+				int j = rand.nextInt(rows - i) + i;
+				int temp = permutation[j];
+				permutation[j] = permutation[i];
+				permutation[i] = temp;
+			}
+			
+			for (int i = 0; i < rows; i++) {
+				int perm = permutation[i];
+				for (int j = 0; j < rows; j++) {
+					if (perm == j) {
+						writeAsShared(BigInteger.ONE, channels);
+					} else {
+						writeAsShared(BigInteger.ZERO, channels);
+					}
+
+				}
+			}
+
+			for (int i = 0; i < rows; i++) {
+				int perm = permutation[i];
+				for (int j = 0; j < columns; j++) {
+					writeAsShared(R[perm][j], channels);
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Generates triples and writes them the appropriate file.
 	 * 

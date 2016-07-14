@@ -36,6 +36,7 @@ public class SpdzStorageConstants {
 	public static final String SQUARE_KEY_PREFIX = "SQUARE_";
 	public static final String BIT_KEY_PREFIX = "BIT_";
 	public static final String INPUT_KEY_PREFIX = "INPUT_";
+	public static final String PERM_KEY_PREFIX = "PERM_";
 	public static final String STORAGE_NAME_PREFIX = STORAGE_FOLDER+"SPDZ_";
 
 	public static final String GLOBAL_STORAGE = "GLOBAL";
@@ -43,4 +44,5 @@ public class SpdzStorageConstants {
 	public static final String EXP_PIPE_STORAGE = "EXP";
 	public static final String TRIPLE_STORAGE = "TRIPLE";
 	public static final String BIT_STORAGE = "BIT";
+	public static final String PERM_STORAGE = "PERM";	
 }

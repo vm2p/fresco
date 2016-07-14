@@ -26,10 +26,8 @@
  *******************************************************************************/
 package dk.alexandra.fresco.demo.inputsum;
 
-import dk.alexandra.fresco.framework.configuration.CmdLineUtil;
 import dk.alexandra.fresco.framework.sce.SCE;
 import dk.alexandra.fresco.framework.sce.SCEFactory;
-import dk.alexandra.fresco.framework.sce.configuration.SCEConfiguration;
 
 public class InputSumExample {
 
@@ -57,16 +55,9 @@ public class InputSumExample {
 	}
 
 	public static void main(String[] args) {
-		int myId = Integer.parseInt(args[0]);	
-		CmdLineUtil util = new CmdLineUtil();
-		SCEConfiguration sceConf = null;
+		SCE sce = SCEFactory.getSCEFromProperties();
 
-		util.parse(args);
-		sceConf = util.getSCEConfiguration();
-
-		SCE sce = SCEFactory.getSCEFromConfiguration(sceConf);
-
-		runApplication(myId, sce);
+		runApplication(sce.getSCEConfiguration().getMyId(), sce);
 	}
 
 }

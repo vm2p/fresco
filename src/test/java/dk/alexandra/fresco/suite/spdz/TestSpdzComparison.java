@@ -123,7 +123,7 @@ public class TestSpdzComparison {
 		// inMemStore, mySQLStore };
 		dk.alexandra.fresco.framework.sce.resources.storage.Storage[] storages = new dk.alexandra.fresco.framework.sce.resources.storage.Storage[] { inMemStore };
 		InitializeStorage.initStorage(storages, noOfParties, 10000, 1000,
-				100000, 100);
+				100000, 100, 0);
 	}
 
 	@Test
