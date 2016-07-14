@@ -37,11 +37,12 @@ import dk.alexandra.fresco.lib.helper.CopyProtocolImpl;
 import dk.alexandra.fresco.lib.helper.builder.tree.TreeProtocol;
 import dk.alexandra.fresco.lib.helper.builder.tree.TreeProtocolNodeGenerator;
 
-public class NumericProtocolBuilder extends AbstractProtocolBuilder {
+public class NumericProtocolBuilder extends NumericIOBuilder {
 
 	private BasicNumericFactory bnf;
 
 	public NumericProtocolBuilder(BasicNumericFactory bnp) {
+		super(bnp);
 		this.bnf = bnp;
 	}
 
