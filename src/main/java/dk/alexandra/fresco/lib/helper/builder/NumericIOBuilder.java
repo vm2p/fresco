@@ -27,6 +27,7 @@
 package dk.alexandra.fresco.lib.helper.builder;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import dk.alexandra.fresco.framework.ProtocolProducer;
 import dk.alexandra.fresco.framework.value.OInt;
@@ -308,6 +309,24 @@ public class NumericIOBuilder extends AbstractProtocolBuilder {
 		endCurScope();
 		return ois;
 	}
+	
+	/**
+	 * Appends a protocol to open a matrix of SInts. Output should be given to
+	 * all parties.
+	 * 
+	 * @param sis
+	 *            SInts to open
+	 * @return the OInts to be loaded with the opened SInts
+	 */
+	public OInt[][] outputMatrix(List<List<SInt>> sis) {
+		OInt[][] ois = new OInt[sis.size()][sis.get(0).size()];
+		beginParScope();
+		for (int i = 0; i < sis.size(); i++) {
+			ois[i] = outputArray(sis.get(i));
+		}
+		endCurScope();
+		return ois;
+	}
 
 	/**
 	 * Appends a protocol to open an array of SInts. Output should be given to
@@ -324,6 +343,22 @@ public class NumericIOBuilder extends AbstractProtocolBuilder {
 		}
 		append(new OutputArray(sis, ois));
 		return ois;
+	}
+	
+	/**
+	 * Appends a protocol to open an array of SInts. Output should be given to
+	 * all parties.
+	 * 
+	 * @param sis
+	 *            SInts to open
+	 * @return the OInts to be loaded with the opened SInts
+	 */
+	public OInt[] outputArray(List<SInt> sis) {
+		SInt[] sisAsArray = new SInt[sis.size()];
+		for(int i = 0; i < sis.size(); i++){
+			sisAsArray[i] = sis.get(i);
+		}
+		return outputArray(sisAsArray);		
 	}
 
 	/**

@@ -63,13 +63,21 @@ public class InitializeStorage {
 		BigInteger p = new BigInteger(
 				"6703903964971298549787012499123814115273848577471136527425966013026501536706464354255445443244279389455058889493431223951165286470575994074291745908195329");
 
-		List<BigInteger> alphaShares = FakeTripGen.generateAlphaShares(noOfPlayers, p);
+		List<BigInteger> alphaShares = new ArrayList<>();		
+		for(int i = 0; i < noOfPlayers; i++){
+			DummyDataSupplierImpl supplier = new DummyDataSupplierImpl((i+1), noOfPlayers);
+			BigInteger share = supplier.getSSK();
+			alphaShares.add(share);
+		}		
+		
+		//Changed to using the dummy alpha. 
+		//List<BigInteger> alphaShares = FakeTripGen.generateAlphaShares(noOfPlayers, p);
 		BigInteger alpha = BigInteger.ZERO;
 		for (BigInteger share : alphaShares) {
 			alpha = alpha.add(share);
 		}
-		alpha = alpha.mod(p);
-
+		alpha = alpha.mod(p);		
+		
 		List<SpdzTriple[]> triples = FakeTripGen.generateTriples(noOfTriples, noOfPlayers, p, alpha);
 		List<List<SpdzInputMask[]>> inputMasks = FakeTripGen.generateInputMasks(noOfInputMasks, noOfPlayers, p, alpha);
 		List<SpdzSInt[]> bits = FakeTripGen.generateBits(noOfBits, noOfPlayers, p, alpha);
@@ -170,7 +178,15 @@ public class InitializeStorage {
 		BigInteger p = new BigInteger(
 				"6703903964971298549787012499123814115273848577471136527425966013026501536706464354255445443244279389455058889493431223951165286470575994074291745908195329");
 
-		List<BigInteger> alphaShares = FakeTripGen.generateAlphaShares(noOfPlayers, p);
+		List<BigInteger> alphaShares = new ArrayList<>();		
+		for(int i = 0; i < noOfPlayers; i++){
+			DummyDataSupplierImpl supplier = new DummyDataSupplierImpl((i+1), noOfPlayers);
+			BigInteger share = supplier.getSSK();
+			alphaShares.add(share);
+		}		
+		
+		//Changed to using the dummy alpha. 
+		//List<BigInteger> alphaShares = FakeTripGen.generateAlphaShares(noOfPlayers, p);
 		BigInteger alpha = BigInteger.ZERO;
 		for (BigInteger share : alphaShares) {
 			alpha = alpha.add(share);
@@ -241,10 +257,9 @@ public class InitializeStorage {
 					for (int threadId = 0; threadId < noOfThreads; threadId++) {
 						String storageName = SpdzStorageConstants.STORAGE_NAME_PREFIX + noOfThreads+"_"+ (i + 1) + "_" + threadId+"_";
 						store.putNext(storageName+SpdzStorageConstants.PERM_STORAGE, perm[i]);
-						System.out.println("Put something in the store: " + storageName+SpdzStorageConstants.PERM_STORAGE);
 					}
 				}
-			}
+			}			
 		}
 	}
 }

@@ -347,7 +347,6 @@ public class FakeTripGen {
 					BigInteger mac = getMac(R[i][j]);
 					List<SpdzElement> elements = toShares(R[i][j], mac, noOfParties);
 					for(int inx = 0; inx < noOfParties; inx++){
-						//res.get(inx)[counters.get(inx)] = new SpdzSInt(elements.get(inx));
 						permutations[inx][counters[inx]] = new SpdzSInt(elements.get(inx));
 						counters[inx] = counters[inx]+1;
 					}
@@ -373,7 +372,6 @@ public class FakeTripGen {
 						BigInteger mac = getMac(BigInteger.ONE);
 						List<SpdzElement> elements = toShares(BigInteger.ONE, mac, noOfParties);
 						for(int inx = 0; inx < noOfParties; inx++){
-							//res.get(inx)[counters.get(inx)] = new SpdzSInt(elements.get(inx));
 							permutations[inx][counters[inx]] = new SpdzSInt(elements.get(inx));
 							counters[inx] = counters[inx]+1;
 						}						
@@ -381,7 +379,6 @@ public class FakeTripGen {
 						BigInteger mac = getMac(BigInteger.ZERO);
 						List<SpdzElement> elements = toShares(BigInteger.ZERO, mac, noOfParties);
 						for(int inx = 0; inx < noOfParties; inx++){
-							//res.get(inx)[counters.get(inx)] = new SpdzSInt(elements.get(inx));
 							permutations[inx][counters[inx]] = new SpdzSInt(elements.get(inx));
 							counters[inx] = counters[inx]+1;
 						}
@@ -396,7 +393,6 @@ public class FakeTripGen {
 					BigInteger mac = getMac(R[perm][j]);
 					List<SpdzElement> elements = toShares(R[perm][j], mac, noOfParties);
 					for(int inx = 0; inx < noOfParties; inx++){
-						//res.get(inx)[counters.get(inx)] = new SpdzSInt(elements.get(inx)); 
 						permutations[inx][counters[inx]] = new SpdzSInt(elements.get(inx));
 						counters[inx] = counters[inx]+1;
 					}

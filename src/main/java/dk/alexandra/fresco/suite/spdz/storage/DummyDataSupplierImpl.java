@@ -189,7 +189,6 @@ public class DummyDataSupplierImpl implements DataSupplier{
 
 	@Override
 	public SpdzSInt[] getNextPerm() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("Not implemented yet");
 	}
 }

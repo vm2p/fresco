@@ -85,7 +85,7 @@ public class TestFakeTripGen {
 		BigInteger alpha = new BigInteger("5081587041441179438932635098620319894716368628029284292880408086703438041331200877980213770035569812296677935118715454650749402237663859711459266577679205");
 		List<SpdzSInt[][]> perms = FakeTripGen.generatePermutationShares(2, noOfParties, modulus, alpha, FakeTripGen.PERM_ROWS, FakeTripGen.PERM_COLS);
 		for(SpdzSInt[][] permutations : perms) {
-			for(int j = 0; j < permutations[0].length; j++){
+			for(int j = 0; j < permutations[0].length; j++){				
 				BigInteger a = permutations[0][j].value.getShare().add(permutations[1][j].value.getShare()).mod(modulus);				
 				
 				BigInteger shareA = permutations[0][j].value.getMac().add(permutations[1][j].value.getMac()).mod(modulus);				
