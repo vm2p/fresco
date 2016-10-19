@@ -26,6 +26,9 @@
  *******************************************************************************/
 package dk.alexandra.fresco.suite.bgw;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -43,11 +46,12 @@ public final class ShamirShare implements Serializable {
 	
 	private static BigInteger primeNumber;
 	public static void setPrimeNumber(BigInteger mod) {
-		primeNumber = mod;
+		ShamirShare.primeNumber = mod;
+		ShamirShare.size = mod.toByteArray().length;
 	}
 
     private static SecureRandom random = new SecureRandom();
-    public static final int size = 12;
+    private static int size;
     private static byte[] randomBytesBuffer;
     public static int partyId;
     private static int randomBytesMarker = 0;
@@ -91,7 +95,19 @@ public final class ShamirShare implements Serializable {
     public byte getPoint() {
         return this.point;
     }
-
+    
+    private void writeObject(ObjectOutputStream out) throws IOException{
+    	out.write(this.getPayload());
+    }
+    
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+    	byte[] b = new byte[ShamirShare.getSize()];
+    	in.read(b);
+    	ShamirShare s = new ShamirShare(b);
+    	this.fieldValue = s.fieldValue;
+    	this.point = s.point;
+    }
+    
     public static int getSize() {
         return ShamirShare.size + 1;
     }
@@ -175,11 +191,7 @@ public final class ShamirShare implements Serializable {
             }
         }
         return vector;
-    }
-    
-    public byte getType() {
-        return 1;
-    }
+    }    
     
     public byte[] getPayload() {
         return this.toByteArray();
