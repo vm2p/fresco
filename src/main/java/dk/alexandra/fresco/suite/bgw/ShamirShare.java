@@ -26,6 +26,9 @@
  *******************************************************************************/
 package dk.alexandra.fresco.suite.bgw;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -54,12 +57,13 @@ public final class ShamirShare implements Serializable {
 	private static final long serialVersionUID = -7986019375218481628L;
 	private static BigInteger[] vector;
 	private static BigInteger primeNumber;
-	private static SecureRandom random = new SecureRandom();
-	private static final int size = 12;
-	private static byte[] randomBytesBuffer;
-	private static int randomBytesMarker = 0;
-	private byte point;
-	private BigInteger fieldValue;
+    private static SecureRandom random = new SecureRandom();
+    private static int size;
+    private static byte[] randomBytesBuffer;
+    public static int partyId;
+    private static int randomBytesMarker = 0;
+    private byte point;
+    private BigInteger fieldValue;
 
 	/**
 	 * Constructs a share given the evaluation point and the value of the secret
@@ -95,7 +99,7 @@ public final class ShamirShare implements Serializable {
 		System.arraycopy(receivedData, 1, bytes, 0, fieldSize);
 		this.fieldValue = new BigInteger(bytes);
 	}
-
+    
 	/**
 	 * Constructs a sharing of a known value
 	 * 
@@ -141,7 +145,19 @@ public final class ShamirShare implements Serializable {
 	public BigInteger getField() {
 		return this.fieldValue;
 	}
-
+    
+    private void writeObject(ObjectOutputStream out) throws IOException{
+    	out.write(this.toByteArray());
+    }
+    
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+    	byte[] b = new byte[ShamirShare.getSize()];
+    	in.read(b);
+    	ShamirShare s = new ShamirShare(b);
+    	this.fieldValue = s.fieldValue;
+    	this.point = s.point;
+    }
+    
 	public void setField(BigInteger field) {
 		this.fieldValue = field;
 	}

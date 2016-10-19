@@ -84,7 +84,8 @@ public class TestBgwBasicArithmetic {
 
 				@Override
 				public BigInteger getModulus() {
-					return new BigInteger("618970019642690137449562111");					
+					return new BigInteger("618970019642690137449562111");
+					//return new BigInteger("170141183460469231731687303715884105727");
 				}
 			};
 			NetworkConfiguration net = netConf.get(playerId);
