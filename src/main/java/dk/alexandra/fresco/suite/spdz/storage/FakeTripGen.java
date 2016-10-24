@@ -329,7 +329,8 @@ public class FakeTripGen {
 	 * @return
 	 */
 	public static List<SpdzSInt[][]> generatePermutationShares(int amount, int noOfParties, BigInteger modulus, BigInteger alpha, int rows, int columns) {
-		FakeTripGen.rand = new Random();
+		//FIXME: Fixed random is used. 
+		FakeTripGen.rand = new Random(0);
 		FakeTripGen.alpha = alpha;
 		FakeTripGen.mod = modulus;
 		List<SpdzSInt[][]> res = new ArrayList<>();
