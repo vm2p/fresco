@@ -69,6 +69,9 @@ import dk.alexandra.fresco.suite.tinytables.online.TinyTablesConfiguration;
 import dk.alexandra.fresco.suite.tinytables.online.TinyTablesProtocolSuite;
 import dk.alexandra.fresco.suite.tinytables.prepro.TinyTablesPreproConfiguration;
 import dk.alexandra.fresco.suite.tinytables.prepro.TinyTablesPreproProtocolSuite;
+import dk.alexandra.fresco.suite.verifiedyao.VerYaoConfiguration;
+import dk.alexandra.fresco.suite.verifiedyao.VerYaoFactory;
+import dk.alexandra.fresco.suite.verifiedyao.VerYaoProtocolSuite;
 
 /**
  * Secure Computation Engine - responsible for having the overview of things and
@@ -209,6 +212,14 @@ public class SCEImpl implements SCE {
 			}
 			this.protocolSuite.init(this.resourcePool, psConf);
 			this.protocolFactory = new DummyFactory();
+			break;
+		case "veryao":
+			this.protocolSuite = new VerYaoProtocolSuite();
+			if (psConf == null) {
+				psConf = new VerYaoConfiguration();
+			}
+			this.protocolSuite.init(this.resourcePool, psConf);
+			this.protocolFactory = new VerYaoFactory();
 			break;
 		default:
 			throw new IllegalArgumentException(

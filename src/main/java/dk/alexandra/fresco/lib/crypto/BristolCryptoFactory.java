@@ -96,6 +96,29 @@ public class BristolCryptoFactory implements ProtocolFactory {
 		return new BristolCircuit(parser, in1, in2, out);
 	}
 	
+	/**
+	 * A circuit for 32x32 bit addition.
+	 * 
+	 * The complete circuit consists of some AND gates, some XOR gates, and some
+	 * NOT gates.
+	 * 
+	 * @param in1,
+	 *            in2 Arrays of 32 SBools for the two inputs to add.
+	 * @param out
+	 *            Array of 33 SBools for the resulting sum.
+	 * @return A protocol that computes 32x32 bit addition.
+	 * 
+	 */
+	public BristolCircuit getAdd32x32Circuit(SBool[] in1, SBool[] in2, SBool[] out) {
+		if (null == in1 || in1.length != 32)
+			throw new IllegalArgumentException("'in1' must be array of 32 SBools");
+		if (null == in2 || in2.length != 32)
+			throw new IllegalArgumentException("'in1' must be array of 32 SBools");
+		if (null == out || out.length != 33)
+			throw new IllegalArgumentException("'out' must be array of 33 SBools");
+		BristolCircuitParser parser = BristolCircuitParser.readCircuitDescription(this.blf, "circuits/add_32x32.txt", in1, in2, out);
+		return new BristolCircuit(parser, in1, in2, out);
+	}
 	
 	/**
 	 * A circuit for one evaluation of the MD5 compression function.
@@ -226,5 +249,4 @@ public class BristolCryptoFactory implements ProtocolFactory {
 		BristolCircuitParser parser = BristolCircuitParser.readCircuitDescription(this.blf, "circuits/DES-non-expanded.txt", plaintext, key, ciphertext);
 		return new BristolCircuit(parser, plaintext, key, ciphertext);
 	}
-	
 }

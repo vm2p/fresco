@@ -37,6 +37,7 @@ import dk.alexandra.fresco.suite.dummy.DummyProtocolSuite;
 import dk.alexandra.fresco.suite.spdz.evaluation.strategy.SpdzProtocolSuite;
 import dk.alexandra.fresco.suite.tinytables.online.TinyTablesProtocolSuite;
 import dk.alexandra.fresco.suite.tinytables.prepro.TinyTablesPreproProtocolSuite;
+import dk.alexandra.fresco.suite.verifiedyao.VerYaoProtocolSuite;
 
 public interface ProtocolSuite {
 
@@ -106,7 +107,9 @@ public interface ProtocolSuite {
 			return "tinytables";
 		} else if (suite instanceof DummyProtocolSuite) {
 			return "dummy";
-		} else {
+		} else if (suite instanceof VerYaoProtocolSuite)
+			return "veryao";
+		else {
 			throw new IllegalArgumentException("FRESCO does not currently know about the given protocol suite: " +suite);
 		}
 	}
