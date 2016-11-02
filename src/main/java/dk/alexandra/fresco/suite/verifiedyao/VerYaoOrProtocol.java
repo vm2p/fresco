@@ -36,6 +36,8 @@ public class VerYaoOrProtocol extends VerYaoProtocol implements OrProtocol {
 			this.setQ(VerYaoConfiguration.q);
 			VerYaoConfiguration.q = VerYaoConfiguration.q + 1;
 			VerYaoConfiguration.gates.add(this);
+			
+			VerYaoConfiguration.veryaocounter = VerYaoConfiguration.veryaocounter + 1;
 		}
 		
 		//this.out.setValue(this.inLeft.getValue() & this.inRight.getValue());

@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +23,74 @@ import dk.alexandra.fresco.framework.value.Value;
 public class VerYaoEvalProtocol extends VerYaoProtocol {
 
 	private boolean done = false;
+	
+	/**
+	 * Adjust the index of the wires. Test purposes only.
+	 * */
+	private List<VerYaoProtocol> adjust(List<VerYaoProtocol> gates, HashMap<Integer,Integer> assoc) {
+		List<VerYaoProtocol> ret = new ArrayList<VerYaoProtocol>();
+		
+		Iterator<VerYaoProtocol> gatesIterator = gates.iterator();
+		while (gatesIterator.hasNext()) {
+			
+			VerYaoProtocol gate = gatesIterator.next();
+			
+			VerYaoSBool newin0 = new VerYaoSBool(assoc.getOrDefault(gate.getIn_w()[0].getId(), gate.getIn_w()[0].getId()));
+			VerYaoSBool newin1 = new VerYaoSBool(assoc.getOrDefault(gate.getIn_w()[1].getId(), gate.getIn_w()[1].getId()));
+			VerYaoSBool newout = new VerYaoSBool(assoc.getOrDefault(gate.getOut_w()[0].getId(), gate.getOut_w()[0].getId()));
+			
+			/*if (assoc.containsKey(gate.getIn_w()[0].getId()) && assoc.containsKey(gate.getIn_w()[1].getId())) {
+				gate.setIn_w(new VerYaoSBool[] { new VerYaoSBool(assoc.get(gate.getIn_w()[0].getId())), new VerYaoSBool(assoc.get(gate.getIn_w()[1].getId())) });
+			}
+			else {
+				if (assoc.containsKey(gate.getIn_w()[0])) {
+					gate.setIn_w(new VerYaoSBool[] { new VerYaoSBool(assoc.get(gate.getIn_w()[0].getId())), new VerYaoSBool(gate.getIn_w()[1].getId()) });
+				}
+				else if (assoc.containsKey(gate.getIn_w()[1])) {
+					gate.setIn_w(new VerYaoSBool[] { new VerYaoSBool(gate.getIn_w()[0].getId()), new VerYaoSBool(assoc.get(gate.getIn_w()[1].getId())) });
+				}
+				else {
+					gate.setIn_w(new VerYaoSBool[] { new VerYaoSBool(gate.getIn_w()[0].getId()), new VerYaoSBool(gate.getIn_w()[1].getId()) });
+				}
+			}
+			
+			if (assoc.containsKey(gate.getOut_w()[0].getId())) {
+				gate.setOut_w(new VerYaoSBool[] { new VerYaoSBool(assoc.getgate.getOut_w()[0].getId()) });
+			}*/
+			
+			gate.setIn_w( new VerYaoSBool[] { newin0, newin1 } );
+			gate.setOut_w( new VerYaoSBool[] { newout } );
+			
+			ret.add(gate);
+		}
+		
+		return ret;
+	}
+	
+	private ArrayList<Integer> notUsed(List<Integer> a, List<Integer> b, int max) {
+		ArrayList<Integer> ret = new ArrayList<Integer>();
+
+		for (int i = 0; i < max; i++) {
+			if (!(a.contains(i) || b.contains(i))) {
+				ret.add(i);
+			}
+		}
+		
+		return ret;
+	}
+	
+	private void fixWireArrays(ArrayList<Integer> notUsed, int max) {
+		int c = 0;
+		
+		for (int i = 0; i < VerYaoConfiguration.A.size(); i++) {
+			if (VerYaoConfiguration.A.get(i) == - 1) {
+				VerYaoConfiguration.A.set(i, notUsed.get(c++));
+			}
+			if (VerYaoConfiguration.B.get(i) == - 1) {
+				VerYaoConfiguration.B.set(i, notUsed.get(c++));
+			}
+		}
+	}
 	
 	private List<VerYaoProtocol> fixOutputIndex(List<VerYaoProtocol> gates, int outstart, int outs, int ins) {
 		List<VerYaoProtocol> ret = new ArrayList<VerYaoProtocol>();
@@ -155,6 +224,8 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 	
 		//ArrayList<VerYaoProtocol> gatescopy = new ArrayList<VerYaoProtocol>(gates);
 		
+		//System.out.println("Good " + g.toString());
+		
 		VerYaoSBool [] in_w = g.getIn_w();
 		int ret = 0;
 	
@@ -166,8 +237,14 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		else {
 			try {
 				gates.removeIf(ga -> ga.getOut_w()[0].getId() != inp);
-				int feedw = gates.get(0).getQ();
-				ret = feedw + ins;
+				
+				if (gates.isEmpty()) {
+					ret = g.getIn_w()[0].getId();
+				}
+				else {
+					int feedw = gates.get(0).getQ();
+					ret = feedw + ins;
+				}
 			} catch (Exception e) {
 				System.out.println(g.toString());
 			}
@@ -195,6 +272,12 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		int ret = 0;
 		int inp;
 		
+		//System.out.println("Good = " + g.toString());
+		
+		if (g.getIn_w()[1].getId() == 640) {
+			System.out.println("bota");
+		}
+		
 		if (inarity == 1) {
 			inp = in_w[0].getId();
 		}
@@ -202,13 +285,23 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 			inp = in_w[1].getId();
 		}
 		
-		if (inp < ins) {
+		gates.removeIf((ga) -> ga.getOut_w()[0].getId() != inp);
+		
+		if (inp < ins && gates.isEmpty()) {
 			ret = inp;
 		}
 		else {
-			gates.removeIf((ga) -> ga.getOut_w()[0].getId() != inp);
-			int feedw = gates.get(0).getQ();
-			ret = feedw + ins;
+			try {
+				if (gates.isEmpty()) {
+					ret = g.getIn_w()[1].getId();
+				}
+				else {
+					int feedw = gates.get(0).getQ();
+					ret = feedw + ins;
+				}
+			} catch (Exception e) {
+				System.out.println("Bad = " + g.toString());
+			}
 		}
 		
 		return ret;
@@ -431,32 +524,54 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		case 2 :
 			switch (round) {
 			case 0:
+				/*VerYaoConfiguration.li1 = 128;
+				VerYaoConfiguration.li2 = 128;
+				VerYaoConfiguration.i1 = "00000000000100010010001000110011010001000101010101100110011101111000100010011001101010101011101111001100110111011110111011111111";
+				VerYaoConfiguration.i2 = "00000000000000010000001000000011000001000000010100000110000001110000100000001001000010100000101100001100000011010000111000001111";
+				VerYaoConfiguration.n = VerYaoConfiguration.li1 + VerYaoConfiguration.li2;*/
 				VerYaoConfiguration.n = VerYaoConfiguration.li1 + VerYaoConfiguration.li2;
 				
-				/*
-				 * Constructs the 'A' list, that contains the first incoming wires of every gate
-				 * */
-				List<VerYaoProtocol> gatescopy = new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates);
-				List<Integer> lwires = VerYaoConfiguration.gates.stream().map(g -> wireA(g, VerYaoConfiguration.n, new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates))).collect(Collectors.toList());
-				//System.out.println(gatescopy.equals(VerYaoConfiguration.gates));
+				System.out.println(VerYaoConfiguration.assoc.get(4736));
+				
+				System.out.println(VerYaoConfiguration.assoc.values().contains(384) + " && " + VerYaoConfiguration.assoc.values().contains(257));
+				
+				ArrayList<Integer> notUsed = notUsed(VerYaoConfiguration.A, VerYaoConfiguration.B, Integer.max(Collections.max(VerYaoConfiguration.A), Collections.max(VerYaoConfiguration.B)));
+				fixWireArrays(notUsed, Integer.max(Collections.max(VerYaoConfiguration.A), Collections.max(VerYaoConfiguration.B)));
+				
+				//VerYaoConfiguration.gates = adjust(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), VerYaoConfiguration.assoc);
+				
+				//List<VerYaoProtocol> gatescopy = new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates);
+				
 				/*
 				 * Constructs the 'B' list, that contains the second incoming wires of every gate
 				 * */
 				//gatescopy = new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates);
-				List<Integer> rwires = VerYaoConfiguration.gates.stream().map(g -> wireB(g, VerYaoConfiguration.n, new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates))).collect(Collectors.toList());
+				//List<Integer> rwires = VerYaoConfiguration.gates.stream().map(g -> wireB(g, VerYaoConfiguration.n, new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates))).collect(Collectors.toList());
 				//System.out.println(gatescopy.equals(VerYaoConfiguration.gates));
+				
+				/*
+				 * Constructs the 'A' list, that contains the first incoming wires of every gate
+				 * */
+				
+				//List<Integer> lwires = VerYaoConfiguration.gates.stream().map(g -> wireA(g, VerYaoConfiguration.n, new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates))).collect(Collectors.toList());
+				//System.out.println(gatescopy.equals(VerYaoConfiguration.gates));
+				
+				
+				
+				
+				
 				/*
 				 * We need to fix some indexes of the output wires.
 				 * FRESCO changes the index of the output wires. We need to put them back in
 				 * place.
 				 * */
-				//System.out.println(Integer.max(maxList(lwires), maxList(rwires)));
-				VerYaoConfiguration.gates = fixOutputIndex(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), Integer.max(maxList(lwires), maxList(rwires)) + 2 - VerYaoConfiguration.m, VerYaoConfiguration.m, VerYaoConfiguration.n);
-				//System.out.println(VerYaoConfiguration.gates.size());
+				//System.out.println(Integer.max(maxList(lwires), maxLisx 256t(rwires)));
+				VerYaoConfiguration.gates = fixOutputIndex(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), Integer.max(maxList(VerYaoConfiguration.A), maxList(VerYaoConfiguration.B)) + 2 - VerYaoConfiguration.m, VerYaoConfiguration.m, VerYaoConfiguration.n);
+				System.out.println(VerYaoConfiguration.gates.size());
 				/*
 				 * Constructs extra wires, that will work as 'output' wires
 				 * */
-				List<Integer> extraw = outputWires(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), Integer.max(maxList(lwires), maxList(rwires)) + 2 - VerYaoConfiguration.m, VerYaoConfiguration.m, VerYaoConfiguration.n);
+				List<Integer> extraw = outputWires(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), Integer.max(maxList(VerYaoConfiguration.A), maxList(VerYaoConfiguration.B)) + 2 - VerYaoConfiguration.m, VerYaoConfiguration.m, VerYaoConfiguration.n);
 				//System.out.println(VerYaoConfiguration.gates.size());
 				/*
 				 * Constructs extra gates, that will work as 'output' gates.
@@ -477,14 +592,14 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				 * Constructs the final list of the first incoming wires of every gate. 
 				 * This is the combination of 'lwires' with 'extraw'.
 				 * */
-				VerYaoConfiguration.A = Stream.concat(lwires.stream(), extraw.stream()).collect(Collectors.toList());
-				
+				//VerYaoConfiguration.A = Stream.concat(lwires.stream(), extraw.stream()).collect(Collectors.toList());
+				VerYaoConfiguration.A.addAll(extraw);
 				/*
 				 * Constructs the final list of the second incoming wires of every gate. 
 				 * This is the combination of 'rwires' with 'extraw'
 				 * */
-				VerYaoConfiguration.B = Stream.concat(rwires.stream(), extraw.stream()).collect(Collectors.toList());
-				
+				//VerYaoConfiguration.B = Stream.concat(rwires.stream(), extraw.stream()).collect(Collectors.toList());
+				VerYaoConfiguration.B.addAll(extraw);
 				/*
 				 * Constructs the final list of gates.
 				 * This is the combination of 'gates' with 'extrag'
@@ -503,26 +618,32 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				 	* The protocol message to be sent to party 2 
 				 * */
 				FileWriter p2stage1 = null;
-				FileWriter debug = null;
+				//FileWriter debug = null;
 				try {
 					p2stage1 = new FileWriter("p2stage1.dat");
-					debug = new FileWriter("debug13.txt");
-					debug.write("LI1 = " + VerYaoConfiguration.li1 + "\n");
+					//debug = new FileWriter("debug13.txt");
+					System.out.println("LI1 = " + VerYaoConfiguration.li1 + "\n");
 					p2stage1.write(VerYaoConfiguration.li1 + "\n");
-					debug.write("I2 = " + parseInputs(VerYaoConfiguration.i2) + "\n");
+					System.out.println("I2 = " + parseInputs(VerYaoConfiguration.i2) + "\n");
 					p2stage1.write(parseInputs(VerYaoConfiguration.i2) + "\n");
-					debug.write("N = " + VerYaoConfiguration.n + "\n");
+					System.out.println("N = " + VerYaoConfiguration.n + "\n");
 					p2stage1.write(VerYaoConfiguration.n + "\n");
-					debug.write("M = " + VerYaoConfiguration.m + "\n");
+					System.out.println("M = " + VerYaoConfiguration.m + "\n");
 					p2stage1.write(VerYaoConfiguration.m + "\n");
-					debug.write("Q = " + VerYaoConfiguration.q + "\n");
+					System.out.println("Q = " + VerYaoConfiguration.q + "\n");
 					p2stage1.write(VerYaoConfiguration.q + "\n");
-					debug.write("A = " + list2string(VerYaoConfiguration.A) + "\n");
-					p2stage1.write(list2string(VerYaoConfiguration.A) + "\n");
-					debug.write("B =" + list2string(VerYaoConfiguration.B) + "\n");
-					p2stage1.write(list2string(VerYaoConfiguration.B) + "\n");
-					debug.write("G = " + gates2string(VerYaoConfiguration.G) + "\n");
-					p2stage1.write(gates2string(VerYaoConfiguration.G) + "\n");
+					String aa = list2string(VerYaoConfiguration.A);
+					String bb = list2string(VerYaoConfiguration.B);
+					System.out.println("Size of A = " + list2string(VerYaoConfiguration.A));
+					System.out.println("Size of B = " + VerYaoConfiguration.B.size());
+					//debug.write("A = " + list2string(VerYaoConfiguration.A) + "\n");
+					p2stage1.write(aa + "\n");
+					//debug.write("B =" + list2string(VerYaoConfiguration.B) + "\n");
+					p2stage1.write(bb + "\n");
+					//debug.write("G = " + gates2string(VerYaoConfiguration.G) + "\n");
+					String gg = gates2string(VerYaoConfiguration.G);
+					System.out.println("Size of G = " + VerYaoConfiguration.G.size());
+					p2stage1.write(gg + "\n");
 					p2stage1.close();
 				} catch (IOException e3) {
 					// TODO Auto-generated catch block

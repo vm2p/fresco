@@ -63,6 +63,8 @@ import dk.alexandra.fresco.suite.tinytables.online.TinyTablesConfiguration;
 import dk.alexandra.fresco.suite.tinytables.online.TinyTablesProtocolSuite;
 import dk.alexandra.fresco.suite.tinytables.prepro.TinyTablesPreproConfiguration;
 import dk.alexandra.fresco.suite.tinytables.prepro.TinyTablesPreproProtocolSuite;
+import dk.alexandra.fresco.suite.verifiedyao.VerYaoConfiguration;
+import dk.alexandra.fresco.suite.verifiedyao.VerYaoProtocolSuite;
 
 
 public class SetIntersectionDemo {
@@ -86,6 +88,38 @@ public class SetIntersectionDemo {
 			// Protocol specific configuration
 			ttc.protocolSuiteConf =  new DummyConfiguration();
 			ProtocolSuite suite = new DummyProtocolSuite();			
+			
+			// The rest is generic configuration as well
+			int noOfVMThreads = 3;
+			int noOfThreads = 3;
+			
+			ProtocolEvaluator evaluator = new SequentialEvaluator();
+			Storage storage = new InMemoryStorage();
+			boolean useSecureConnection = true;
+			ttc.sceConf = new TestSCEConfiguration(suite, evaluator, noOfThreads, noOfVMThreads,
+					ttc.netConf, storage, useSecureConnection);
+			conf.put(playerId, ttc);
+		}
+		String[] result = this.setIntersectionDemo(conf);
+		Assert.assertTrue(verifyResult(result));
+	}
+	
+	@Test
+	public void verYaoTest() throws Exception{
+		// Generic configuration
+		List<Integer> ports = new ArrayList<Integer>(noPlayers);
+		for (int i=1; i<=noPlayers; i++) {
+			ports.add(9000 + i);
+		}
+		Map<Integer, NetworkConfiguration> netConf = TestConfiguration.getNetworkConfigurations(noPlayers, ports, logLevel);
+		Map<Integer, TestThreadConfiguration> conf = new HashMap<Integer, TestThreadConfiguration>();
+		for (int playerId : netConf.keySet()) {
+			TestThreadConfiguration ttc = new TestThreadConfiguration();
+			ttc.netConf = netConf.get(playerId);
+			
+			// Protocol specific configuration
+			ttc.protocolSuiteConf =  new VerYaoConfiguration();
+			ProtocolSuite suite = new VerYaoProtocolSuite();			
 			
 			// The rest is generic configuration as well
 			int noOfVMThreads = 3;

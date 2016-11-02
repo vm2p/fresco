@@ -66,20 +66,20 @@ public class TestVerYaoProtocolSuite {
 	/***/
 	
 	
-	/*@Test
+	@Test
 	public void test_Add32x32_Sequential() throws Exception {
 		runTest(new VerYaoTests.Add32x32Test(), EvaluationStrategy.SEQUENTIAL);
-	}*/
+	}
 	
 	/*@Test
 	public void test_Mult32x32_Sequential() throws Exception {
 		runTest(new VerYaoTests.Mult32x32Test(), EvaluationStrategy.SEQUENTIAL);
 	}*/
 	
-	@Test
+	/*@Test
 	public void test_AES_Sequential() throws Exception {
 		runTest(new VerYaoTests.AesTest(), EvaluationStrategy.SEQUENTIAL);
-	}
+	}*/
 	
 	/*@Test
 	public void test_AES_Parallel() throws Exception {
@@ -114,7 +114,7 @@ public class TestVerYaoProtocolSuite {
 	/*@Test
 	public void test_SHA256_Parallel() throws Exception {
 		runTest(new BristolCryptoTests.Sha256Test(), EvaluationStrategy.PARALLEL);
-	}*/	
+	}*/
 	
 	/*@Test
 	public void test_comparison() throws Exception {

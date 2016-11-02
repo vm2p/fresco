@@ -26,6 +26,9 @@
  *******************************************************************************/
 package dk.alexandra.fresco.suite.dummy;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 import dk.alexandra.fresco.framework.network.SCENetwork;
 import dk.alexandra.fresco.framework.sce.resources.ResourcePool;
 import dk.alexandra.fresco.framework.value.SBool;
@@ -63,6 +66,18 @@ public class DummyAndProtocol extends DummyProtocol implements AndProtocol {
 	@Override
 	public EvaluationStatus evaluate(int round, ResourcePool resourcePool,
 			SCENetwork network) {
+		
+		if (resourcePool.getMyId() == 1) {
+			try {
+				FileWriter fw = new FileWriter("circuit.txt", true);
+				fw.write(this + "\n");
+				fw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		this.out.setValue(this.inLeft.getValue() & this.inRight.getValue());
 		return EvaluationStatus.IS_DONE;
 	}

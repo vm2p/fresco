@@ -1,6 +1,7 @@
 package dk.alexandra.fresco.suite.verifiedyao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 		
 	static List<Integer> A;
 	static List<Integer> B;
+	static List<Integer> O;
 	static List<String> G;
 		
 	static List<VerYaoProtocol> gates;
@@ -48,6 +50,12 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 	
 	static String output;
 	
+	static HashMap<Integer,Integer> assoc;
+	
+	static int veryaocounter;
+	
+	static boolean alreadyInputs;
+	
 	public VerYaoConfiguration() {
 		VerYaoConfiguration.li1 = 0;
 		VerYaoConfiguration.li2 = 0;
@@ -56,6 +64,7 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 		VerYaoConfiguration.q = 0;
 		VerYaoConfiguration.A = new ArrayList<Integer>();
 		VerYaoConfiguration.B = new ArrayList<Integer>();
+		VerYaoConfiguration.O = new ArrayList<Integer>();
 		VerYaoConfiguration.G = new ArrayList<String>();
 		VerYaoConfiguration.gates = new ArrayList<VerYaoProtocol>();
 		VerYaoConfiguration.outGates = new ArrayList<VerYaoProtocol>();
@@ -69,6 +78,16 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 		VerYaoConfiguration.output2 = new ArrayList<VerYaoOBool>();
 		
 		VerYaoConfiguration.output = "";
+		
+		VerYaoConfiguration.assoc = new HashMap<Integer,Integer>();
+		
+		VerYaoConfiguration.veryaocounter = 0;
+		
+		VerYaoConfiguration.alreadyInputs = false;
+	}
+	
+	public static void setLi1 (int li1) {
+		VerYaoConfiguration.li1 = li1;
 	}
 	
 	private static String wiresToString(List<Integer> wires) {

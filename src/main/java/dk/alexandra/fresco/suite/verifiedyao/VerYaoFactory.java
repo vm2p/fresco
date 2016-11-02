@@ -75,18 +75,6 @@ public class VerYaoFactory extends AbstractBinaryFactory implements BasicLogicFa
 		return new VerYaoSBool(this.counter++, b);
 	}
 	
-	private String boolToString(boolean b) {
-		String ret;
-		
-		if (b) {
-			ret = "1";
-		}
-		else {
-			ret = "0";
-		}
-		return ret;
-	}
-	
 	@Override
 	public SBool[] getKnownConstantSBools(boolean[] bools) {
 		
@@ -110,6 +98,8 @@ public class VerYaoFactory extends AbstractBinaryFactory implements BasicLogicFa
 		
 		for (int i=0; i<bools.length; i++) {
 			res[i] = new VerYaoSBool(this.counter++, bools[i]);
+			Integer val = VerYaoConfiguration.assoc.putIfAbsent(this.counter-1, VerYaoConfiguration.veryaocounter);
+			if (val == null) VerYaoConfiguration.veryaocounter = VerYaoConfiguration.veryaocounter + 1;
 		}
 		
 		/*if (this.id == 1) {

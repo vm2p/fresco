@@ -26,6 +26,9 @@
  *******************************************************************************/
 package dk.alexandra.fresco.suite.dummy;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 import dk.alexandra.fresco.framework.MPCException;
 import dk.alexandra.fresco.framework.network.SCENetwork;
 import dk.alexandra.fresco.framework.sce.resources.ResourcePool;
@@ -49,6 +52,18 @@ public class DummyCloseBoolProtocol extends DummyProtocol implements CloseBoolPr
 	
 	@Override
 	public EvaluationStatus evaluate(int round, ResourcePool resourcePool, SCENetwork network) {
+		
+		if (resourcePool.getMyId() == 1) {
+			try {
+				FileWriter fw = new FileWriter("circuit.txt", true);
+				fw.write(this + "\n");
+				fw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		switch (round) {
 		case 0:
 			if (resourcePool.getMyId() == sender) {
