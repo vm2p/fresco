@@ -106,7 +106,7 @@ public abstract class VerYaoProtocol extends HalfCookedNativeProtocol {
 	 * such that the input wires are the same.
 	 * */
 	public VerYaoProtocol(SBool in, SBool out) {
-		this.setInarity(2);
+		this.setInarity(1);
 		this.setOutarity(1);
 		this.setIn_w(new VerYaoSBool[] { (VerYaoSBool)in, (VerYaoSBool)in} );
 		this.setOut_w(new VerYaoSBool[] { (VerYaoSBool)out });

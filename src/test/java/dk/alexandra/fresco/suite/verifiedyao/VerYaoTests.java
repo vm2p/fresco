@@ -238,10 +238,10 @@ public class VerYaoTests {
 							boolean[] key_val = toBoolean(keyVec[0]);
 							boolean[] in_val = toBoolean(plainVec);
 							
-							plain = builder.knownSBool(in_val);
+							plain = prov.getKnownConstantSBools(in_val);
 							VerYaoConfiguration.i1 = fromBoolean(in_val);
 							VerYaoConfiguration.li1 = 128;
-							key = builder.knownSBool(key_val);
+							key = prov.getKnownConstantSBools(key_val);
 							VerYaoConfiguration.i2 = fromBoolean(key_val);
 							VerYaoConfiguration.li2 = 128;
 							cipher = prov.getSBools(128);

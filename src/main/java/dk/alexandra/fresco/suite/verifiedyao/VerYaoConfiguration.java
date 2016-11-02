@@ -28,6 +28,7 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 	static int n;
 	static int m;
 	static int q;
+	static int index;
 		
 	static List<Integer> A;
 	static List<Integer> B;
@@ -51,6 +52,7 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 	static String output;
 	
 	static HashMap<Integer,Integer> assoc;
+	static HashMap<VerYaoSBool,Integer> assoc_not_used;
 	
 	static int veryaocounter;
 	
@@ -80,8 +82,10 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 		VerYaoConfiguration.output = "";
 		
 		VerYaoConfiguration.assoc = new HashMap<Integer,Integer>();
+		VerYaoConfiguration.assoc_not_used = new HashMap<VerYaoSBool,Integer>();
 		
 		VerYaoConfiguration.veryaocounter = 0;
+		VerYaoConfiguration.index = 0;
 		
 		VerYaoConfiguration.alreadyInputs = false;
 	}

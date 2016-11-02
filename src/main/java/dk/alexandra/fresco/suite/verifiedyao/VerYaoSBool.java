@@ -58,6 +58,10 @@ private static final long serialVersionUID = -4614951451129474002L;
 	public int getId() {
 		return this.id;
 	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	@Override
 	public String toString() {

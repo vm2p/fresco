@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -67,11 +68,47 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		return ret;
 	}
 	
-	private ArrayList<Integer> notUsed(List<Integer> a, List<Integer> b, int max) {
+	private List<Integer> getA(List<VerYaoProtocol> gates) {
+		List<Integer> ret = new ArrayList<Integer>();
+		
+		Iterator<VerYaoProtocol> iter = gates.iterator();
+		
+		while (iter.hasNext()) ret.add(iter.next().getIn_w()[0].getId());
+		
+		return ret;
+	}
+	
+	private List<Integer> getB(List<VerYaoProtocol> gates) {
+		List<Integer> ret = new ArrayList<Integer>();
+		
+		Iterator<VerYaoProtocol> iter = gates.iterator();
+		
+		while (iter.hasNext()) {
+			VerYaoProtocol gate = iter.next();
+			
+			if (gate.getGate().equals("INV")) {
+				System.out.println("");
+			}
+			
+			if (gate.getInarity() == 1) {
+				ret.add(gate.getIn_w()[0].getId());
+			}
+			else {
+				ret.add(gate.getIn_w()[1].getId());
+			}
+		}
+		
+		return ret;
+	}
+	
+	private ArrayList<Integer> notUsed(List<VerYaoProtocol> gates) {
 		ArrayList<Integer> ret = new ArrayList<Integer>();
-
+		ArrayList<Integer> a = (ArrayList<Integer>) getA(gates);
+		ArrayList<Integer> b = (ArrayList<Integer>) getB(gates);
+		int max = Integer.max(Collections.max(a), Collections.max(b));
+		
 		for (int i = 0; i < max; i++) {
-			if (!(a.contains(i) || b.contains(i))) {
+			if (!(a.contains(i)|| b.contains(i))) {
 				ret.add(i);
 			}
 		}
@@ -79,17 +116,24 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		return ret;
 	}
 	
-	private void fixWireArrays(ArrayList<Integer> notUsed, int max) {
+	private void fixWireArrays(ArrayList<Integer> notUsed) {
 		int c = 0;
 		
-		for (int i = 0; i < VerYaoConfiguration.A.size(); i++) {
+		Iterator<VerYaoSBool> iter = VerYaoConfiguration.assoc_not_used.keySet().iterator();
+		while (iter.hasNext()) {
+			VerYaoSBool sbool = iter.next();
+			System.out.println(sbool.hashCode());
+			sbool.setId(notUsed.get(VerYaoConfiguration.assoc_not_used.get(sbool)));
+		}
+		
+		/*for (int i = 0; i < VerYaoConfiguration.A.size(); i++) {
 			if (VerYaoConfiguration.A.get(i) == - 1) {
 				VerYaoConfiguration.A.set(i, notUsed.get(c++));
 			}
 			if (VerYaoConfiguration.B.get(i) == - 1) {
 				VerYaoConfiguration.B.set(i, notUsed.get(c++));
 			}
-		}
+		}*/
 	}
 	
 	private List<VerYaoProtocol> fixOutputIndex(List<VerYaoProtocol> gates, int outstart, int outs, int ins) {
@@ -342,6 +386,9 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		case "XOR":
 			ret = "0110";
 			break;
+		case "OUT":
+			ret = "0001";
+			break;
 		}
 		
 		return ret;
@@ -516,6 +563,7 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				System.out.println("Final: " + line);
 				VerYaoConfiguration.output = line;
 				done = true;
+				network.send(2, "");
 				break;
 			default:
 				throw new MPCException("No further rounds.");
@@ -535,8 +583,8 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				
 				System.out.println(VerYaoConfiguration.assoc.values().contains(384) + " && " + VerYaoConfiguration.assoc.values().contains(257));
 				
-				ArrayList<Integer> notUsed = notUsed(VerYaoConfiguration.A, VerYaoConfiguration.B, Integer.max(Collections.max(VerYaoConfiguration.A), Collections.max(VerYaoConfiguration.B)));
-				fixWireArrays(notUsed, Integer.max(Collections.max(VerYaoConfiguration.A), Collections.max(VerYaoConfiguration.B)));
+				ArrayList<Integer> notUsed = notUsed(VerYaoConfiguration.gates);
+				fixWireArrays(notUsed);
 				
 				//VerYaoConfiguration.gates = adjust(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), VerYaoConfiguration.assoc);
 				
@@ -566,12 +614,18 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				 * place.
 				 * */
 				//System.out.println(Integer.max(maxList(lwires), maxLisx 256t(rwires)));
-				VerYaoConfiguration.gates = fixOutputIndex(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), Integer.max(maxList(VerYaoConfiguration.A), maxList(VerYaoConfiguration.B)) + 2 - VerYaoConfiguration.m, VerYaoConfiguration.m, VerYaoConfiguration.n);
+				
+				//VerYaoConfiguration.gates = fixOutputIndex(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), Integer.max(maxList(VerYaoConfiguration.A), maxList(VerYaoConfiguration.B)) + 2 - VerYaoConfiguration.m, VerYaoConfiguration.m, VerYaoConfiguration.n);
 				System.out.println(VerYaoConfiguration.gates.size());
+				
+				
+				VerYaoConfiguration.A = getA(VerYaoConfiguration.gates);
+				VerYaoConfiguration.B = getB(VerYaoConfiguration.gates);
+				
 				/*
 				 * Constructs extra wires, that will work as 'output' wires
 				 * */
-				List<Integer> extraw = outputWires(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), Integer.max(maxList(VerYaoConfiguration.A), maxList(VerYaoConfiguration.B)) + 2 - VerYaoConfiguration.m, VerYaoConfiguration.m, VerYaoConfiguration.n);
+				//List<Integer> extraw = outputWires(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), Integer.max(maxList(VerYaoConfiguration.A), maxList(VerYaoConfiguration.B)) + 2 - VerYaoConfiguration.m, VerYaoConfiguration.m, VerYaoConfiguration.n);
 				//System.out.println(VerYaoConfiguration.gates.size());
 				/*
 				 * Constructs extra gates, that will work as 'output' gates.
@@ -593,18 +647,18 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				 * This is the combination of 'lwires' with 'extraw'.
 				 * */
 				//VerYaoConfiguration.A = Stream.concat(lwires.stream(), extraw.stream()).collect(Collectors.toList());
-				VerYaoConfiguration.A.addAll(extraw);
+				//VerYaoConfiguration.A.addAll(extraw);
 				/*
 				 * Constructs the final list of the second incoming wires of every gate. 
 				 * This is the combination of 'rwires' with 'extraw'
 				 * */
 				//VerYaoConfiguration.B = Stream.concat(rwires.stream(), extraw.stream()).collect(Collectors.toList());
-				VerYaoConfiguration.B.addAll(extraw);
+				//VerYaoConfiguration.B.addAll(extraw);
 				/*
 				 * Constructs the final list of gates.
 				 * This is the combination of 'gates' with 'extrag'
 				 * */
-				VerYaoConfiguration.G = Stream.concat(gates.stream(), extrag.stream()).collect(Collectors.toList());
+				VerYaoConfiguration.G = gates; //Stream.concat(gates.stream(), extrag.stream()).collect(Collectors.toList());
 				System.out.println(VerYaoConfiguration.G.get(VerYaoConfiguration.G.size() - 1));
 				/*
 				 * Builds the command the will call the OCaml program that executes the first step of the protocol.
@@ -802,6 +856,11 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				break;
 			case 3:
 				network.expectInputFromPlayer(1);
+				break;
+			case 4:
+				inmsg = "";
+				inmsg = network.receive(1);
+				done = true;
 				break;
 			default:
 				throw new MPCException("No further rounds.");

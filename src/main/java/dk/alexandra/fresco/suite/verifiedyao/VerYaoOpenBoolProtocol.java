@@ -32,14 +32,34 @@ public class VerYaoOpenBoolProtocol extends VerYaoProtocol implements OpenBoolPr
 	public EvaluationStatus evaluate(int round, ResourcePool resourcePool,
 			SCENetwork network) {
 		
+		VerYaoSBool newIn = null;
+		
 		if (resourcePool.getMyId() == 1) {
 			VerYaoConfiguration.output1.add(this.out);
 		}
 		if (resourcePool.getMyId() == 2) {
+			
+			if (VerYaoConfiguration.assoc.containsKey(this.in.getId())) {
+				//VerYaoConfiguration.A.add(VerYaoConfiguration.assoc.get(this.inLeft.getId()));
+				newIn = new VerYaoSBool(VerYaoConfiguration.assoc.get(this.in.getId()));
+			}
+			else {
+				//VerYaoConfiguration.assoc.put(this.inLeft.getId(), Integer.max(Collections.max(VerYaoConfiguration.A), Integer.max(Collections.max(VerYaoConfiguration.B), Collections.max(VerYaoConfiguration.O))));
+				//VerYaoConfiguration.A.add(-1);
+				newIn = new VerYaoSBool(this.in.getId());
+				if (VerYaoConfiguration.assoc_not_used.containsKey(this.in)) {
+					VerYaoConfiguration.assoc_not_used.put(newIn, VerYaoConfiguration.index++);
+				}
+			}
+			
 			VerYaoConfiguration.m = VerYaoConfiguration.m + 1;
 			VerYaoConfiguration.q = VerYaoConfiguration.q + 1;
+			this.setGate("OUT");
+			this.setIn_w(new VerYaoSBool[] {newIn});
+			VerYaoConfiguration.gates.add(this);
 			VerYaoConfiguration.outGates.add(this);
 			System.out.println("metodo = " + this.out.hashCode());
+			System.out.println("metodo = " + this.in.hashCode());
 			VerYaoConfiguration.oBools.add(this.out);
 			
 			VerYaoConfiguration.output2.add(this.out);

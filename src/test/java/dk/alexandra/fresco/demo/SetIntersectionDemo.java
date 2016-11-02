@@ -72,7 +72,7 @@ public class SetIntersectionDemo {
 	private Level logLevel = Level.FINE;
 	private int noPlayers = 2;
 	
-	@Test
+	/*@Test
 	public void dummyTest() throws Exception{
 		// Generic configuration
 		List<Integer> ports = new ArrayList<Integer>(noPlayers);
@@ -102,7 +102,7 @@ public class SetIntersectionDemo {
 		}
 		String[] result = this.setIntersectionDemo(conf);
 		Assert.assertTrue(verifyResult(result));
-	}
+	}*/
 	
 	@Test
 	public void verYaoTest() throws Exception{
@@ -142,7 +142,7 @@ public class SetIntersectionDemo {
 	 * actual computation phase.
 	 * @throws Exception
 	 */
-	@Test
+	/*@Test
 	public void tinyTablesTest() throws Exception{
 		// Generic configuration
 		List<Integer> ports = new ArrayList<Integer>(noPlayers);
@@ -200,7 +200,7 @@ public class SetIntersectionDemo {
 		// Finally we run the processing phase and verify the result
 		String[] result = this.setIntersectionDemo(conf);
 		Assert.assertTrue(verifyResult(result));
-	}
+	}*/
 	
 
 	private boolean verifyResult(String[] result){
