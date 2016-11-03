@@ -103,8 +103,10 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 	
 	private ArrayList<Integer> notUsed(List<VerYaoProtocol> gates) {
 		ArrayList<Integer> ret = new ArrayList<Integer>();
-		ArrayList<Integer> a = (ArrayList<Integer>) getA(gates);
-		ArrayList<Integer> b = (ArrayList<Integer>) getB(gates);
+		List<Integer> a = (ArrayList<Integer>) getA(gates);
+		a = a.subList(0, VerYaoConfiguration.q - VerYaoConfiguration.m);
+		List<Integer> b = (ArrayList<Integer>) getB(gates);
+		b = b.subList(0, VerYaoConfiguration.q - VerYaoConfiguration.m);
 		int max = Integer.max(Collections.max(a), Collections.max(b));
 		
 		for (int i = 0; i < max; i++) {
@@ -583,7 +585,7 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				
 				System.out.println(VerYaoConfiguration.assoc.values().contains(384) + " && " + VerYaoConfiguration.assoc.values().contains(257));
 				
-				ArrayList<Integer> notUsed = notUsed(VerYaoConfiguration.gates);
+ 				ArrayList<Integer> notUsed = notUsed(VerYaoConfiguration.gates);
 				fixWireArrays(notUsed);
 				
 				//VerYaoConfiguration.gates = adjust(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), VerYaoConfiguration.assoc);

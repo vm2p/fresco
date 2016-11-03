@@ -52,7 +52,7 @@ public class VerYaoNotProtocol extends VerYaoProtocol implements NotProtocol {
 				//VerYaoConfiguration.B.add(-1);
 				newIn = new VerYaoSBool(this.in.getId());
 				if (VerYaoConfiguration.assoc_not_used.containsKey(this.in)) {
-					VerYaoConfiguration.assoc_not_used.put(newIn, VerYaoConfiguration.index++);
+					VerYaoConfiguration.assoc_not_used.putIfAbsent(newIn, VerYaoConfiguration.index++);
 				}
 			}
 			

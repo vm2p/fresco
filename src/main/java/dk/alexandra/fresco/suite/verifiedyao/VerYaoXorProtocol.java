@@ -59,7 +59,7 @@ public class VerYaoXorProtocol extends VerYaoProtocol implements XorProtocol {
 				//VerYaoConfiguration.A.add(-1);
 				newInLeft = new VerYaoSBool(this.inLeft.getId());
 				if (VerYaoConfiguration.assoc_not_used.containsKey(this.inLeft)) {
-					VerYaoConfiguration.assoc_not_used.put(newInLeft, VerYaoConfiguration.index++);
+					VerYaoConfiguration.assoc_not_used.putIfAbsent(newInLeft, VerYaoConfiguration.index++);
 				}
 			}
 			
@@ -72,7 +72,7 @@ public class VerYaoXorProtocol extends VerYaoProtocol implements XorProtocol {
 				//VerYaoConfiguration.B.add(-1);
 				newInRight = new VerYaoSBool(this.inRight.getId());
 				if (!VerYaoConfiguration.assoc_not_used.containsKey(this.inRight)) {
-					VerYaoConfiguration.assoc_not_used.put(newInRight, VerYaoConfiguration.index++);
+					VerYaoConfiguration.assoc_not_used.putIfAbsent(newInRight, VerYaoConfiguration.index++);
 					System.out.println(this.inLeft.hashCode());
 				}
 			}

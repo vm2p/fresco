@@ -15,18 +15,8 @@ public class VerYaoOpenBoolProtocol extends VerYaoProtocol implements OpenBoolPr
 	public VerYaoOpenBoolProtocol(SBool in, OBool out) {
 		super(in, out);
 		this.in = (VerYaoSBool) in;
-		this.out = (VerYaoOBool) out;
-		
-		//VerYaoConfiguration.output.add(this.out);
-		
-		System.out.println("contructor = " + out.hashCode());
+		this.out = (VerYaoOBool) out;		
 	}
-	
-	public VerYaoOpenBoolProtocol(SBool in, OBool out, int target) {
-		super(in, out);
-		this.in = (VerYaoSBool) in;
-		this.out = (VerYaoOBool) out;
-	}	
 	
 	@Override
 	public EvaluationStatus evaluate(int round, ResourcePool resourcePool,
@@ -38,7 +28,7 @@ public class VerYaoOpenBoolProtocol extends VerYaoProtocol implements OpenBoolPr
 			VerYaoConfiguration.output1.add(this.out);
 		}
 		if (resourcePool.getMyId() == 2) {
-			
+						
 			if (VerYaoConfiguration.assoc.containsKey(this.in.getId())) {
 				//VerYaoConfiguration.A.add(VerYaoConfiguration.assoc.get(this.inLeft.getId()));
 				newIn = new VerYaoSBool(VerYaoConfiguration.assoc.get(this.in.getId()));
@@ -47,14 +37,14 @@ public class VerYaoOpenBoolProtocol extends VerYaoProtocol implements OpenBoolPr
 				//VerYaoConfiguration.assoc.put(this.inLeft.getId(), Integer.max(Collections.max(VerYaoConfiguration.A), Integer.max(Collections.max(VerYaoConfiguration.B), Collections.max(VerYaoConfiguration.O))));
 				//VerYaoConfiguration.A.add(-1);
 				newIn = new VerYaoSBool(this.in.getId());
-				if (VerYaoConfiguration.assoc_not_used.containsKey(this.in)) {
+				if (!VerYaoConfiguration.assoc_not_used.containsKey(this.in)) {
 					VerYaoConfiguration.assoc_not_used.put(newIn, VerYaoConfiguration.index++);
 				}
 			}
 			
 			VerYaoConfiguration.m = VerYaoConfiguration.m + 1;
 			VerYaoConfiguration.q = VerYaoConfiguration.q + 1;
-			this.setGate("OUT");
+			this.setGate("AND");
 			this.setIn_w(new VerYaoSBool[] {newIn});
 			VerYaoConfiguration.gates.add(this);
 			VerYaoConfiguration.outGates.add(this);
@@ -70,7 +60,7 @@ public class VerYaoOpenBoolProtocol extends VerYaoProtocol implements OpenBoolPr
 	
 	@Override
 	public String toString() {
-		return "VerYaoOpenBoolGate(" + this.getIn_w()[0] + "," + this.getOut_w()[0] + ")";
+		return "VerYaoOpenBoolGate(" + this.getIn_w()[0] + "," + this.getOut_ow()[0] + ")";
 	}
 
 	@Override

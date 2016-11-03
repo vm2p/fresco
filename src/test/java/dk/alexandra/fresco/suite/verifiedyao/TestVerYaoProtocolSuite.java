@@ -76,10 +76,10 @@ public class TestVerYaoProtocolSuite {
 		runTest(new VerYaoTests.Mult32x32Test(), EvaluationStrategy.SEQUENTIAL);
 	}*/
 	
-	@Test
+	/*@Test
 	public void test_AES_Sequential() throws Exception {
 		runTest(new VerYaoTests.AesTest(), EvaluationStrategy.SEQUENTIAL);
-	}
+	}*/
 	
 	/*@Test
 	public void test_AES_Parallel() throws Exception {
@@ -101,10 +101,10 @@ public class TestVerYaoProtocolSuite {
 		runTest(new VerYaoTests.DesTest(), EvaluationStrategy.SEQUENTIAL);
 	}*/	
 	
-	/*@Test
+	@Test
 	public void test_SHA1_Sequential() throws Exception {
 		runTest(new VerYaoTests.Sha1Test(), EvaluationStrategy.SEQUENTIAL);
-	}*/
+	}
 	
 	/*@Test
 	public void test_SHA256_Sequential() throws Exception {
