@@ -17,9 +17,11 @@ import dk.alexandra.fresco.lib.logic.AbstractBinaryFactory;
 public class VerYaoFactory extends AbstractBinaryFactory implements BasicLogicFactory, OrProtocolFactory {
 	
 	private int counter;
+	private int id;
 	
-	public VerYaoFactory () {
+	public VerYaoFactory (int id) {
 		this.counter = 0;
+		this.id = id;
 	}
 	
 	public int getCounter() {
@@ -96,12 +98,21 @@ public class VerYaoFactory extends AbstractBinaryFactory implements BasicLogicFa
 			VerYaoConfiguration.li2 = VerYaoConfiguration.visited2 ? VerYaoConfiguration.li2 : VerYaoConfiguration.li2 + bools.length;
 		}*/
 		
-		for (int i=0; i<bools.length; i++) {
-			res[i] = new VerYaoSBool(this.counter++, bools[i]);
-			Integer val = VerYaoConfiguration.assoc.putIfAbsent(this.counter-1, VerYaoConfiguration.veryaocounter);
-			if (val == null) VerYaoConfiguration.veryaocounter = VerYaoConfiguration.veryaocounter + 1;
+		if (this.id == 2) {
+			for (int i=0; i<bools.length; i++) {
+				res[i] = new VerYaoSBool(this.counter++, bools[i]);
+				Integer val = VerYaoConfiguration.assoc.putIfAbsent(this.counter-1, VerYaoConfiguration.veryaocounter);
+				if (val == null) VerYaoConfiguration.veryaocounter = VerYaoConfiguration.veryaocounter + 1;
+			}
 		}
-		
+		else {
+			for (int i=0; i<bools.length; i++) {
+				res[i] = new VerYaoSBool(this.counter++, bools[i]);
+				//Integer val = VerYaoConfiguration.assoc.putIfAbsent(this.counter-1, VerYaoConfiguration.veryaocounter);
+				//if (val == null) VerYaoConfiguration.veryaocounter = VerYaoConfiguration.veryaocounter + 1;
+			}
+		}
+		System.out.println(this.counter + " " + VerYaoConfiguration.veryaocounter);
 		/*if (this.id == 1) {
 			for (int i=0; i<bools.length; i++) {
 				res[i] = new VerYaoSBool(this.counter++, bools[i]);

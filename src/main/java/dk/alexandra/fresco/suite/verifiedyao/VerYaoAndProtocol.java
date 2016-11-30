@@ -46,9 +46,6 @@ public class VerYaoAndProtocol extends VerYaoProtocol implements AndProtocol {
 		
 		if (resourcePool.getMyId() == 2) {
 			
-			if (this.inLeft.getId() == 610) {
-				System.out.println(this);
-			}
 			
 			if (VerYaoConfiguration.q == 0) VerYaoConfiguration.alreadyInputs = true;
 			

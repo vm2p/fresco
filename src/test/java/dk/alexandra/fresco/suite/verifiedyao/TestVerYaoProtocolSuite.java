@@ -99,7 +99,7 @@ public class TestVerYaoProtocolSuite {
 	/*@Test
 	public void test_DES_Sequential() throws Exception {
 		runTest(new VerYaoTests.DesTest(), EvaluationStrategy.SEQUENTIAL);
-	}*/	
+	}*/
 	
 	@Test
 	public void test_SHA1_Sequential() throws Exception {

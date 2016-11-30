@@ -48,8 +48,6 @@ public class VerYaoOpenBoolProtocol extends VerYaoProtocol implements OpenBoolPr
 			this.setIn_w(new VerYaoSBool[] {newIn});
 			VerYaoConfiguration.gates.add(this);
 			VerYaoConfiguration.outGates.add(this);
-			System.out.println("metodo = " + this.out.hashCode());
-			System.out.println("metodo = " + this.in.hashCode());
 			VerYaoConfiguration.oBools.add(this.out);
 			
 			VerYaoConfiguration.output2.add(this.out);

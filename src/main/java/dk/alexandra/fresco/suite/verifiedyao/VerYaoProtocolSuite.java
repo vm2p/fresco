@@ -99,9 +99,6 @@ public class VerYaoProtocolSuite implements ProtocolSuite {
 			protocolNetwork.nextRound();
 		} while (status != EvaluationStatus.IS_DONE);
 		
-		System.out.println("Tamanho = " + VerYaoConfiguration.output1.size());
-		System.out.println("Tamanho = " + VerYaoConfiguration.output2.size());
-		System.out.println("Tamanho = " + VerYaoConfiguration.output.length());
 		for (i = 0; i < VerYaoConfiguration.output.length(); i ++) {
 			//VerYaoConfiguration.outGates.get(i).
 			if (VerYaoConfiguration.output.charAt(i) == '1') {
@@ -112,7 +109,6 @@ public class VerYaoProtocolSuite implements ProtocolSuite {
 			VerYaoConfiguration.output1.get(i).setValue(false);
 			VerYaoConfiguration.output2.get(i).setValue(false);
 			}
-			//System.out.println("atribuição = " + VerYaoConfiguration.oBools.get(i).hashCode());
 		}
 				
 		/*

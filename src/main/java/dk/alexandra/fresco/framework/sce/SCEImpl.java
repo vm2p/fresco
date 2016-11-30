@@ -219,7 +219,7 @@ public class SCEImpl implements SCE {
 				psConf = new VerYaoConfiguration();
 			}
 			this.protocolSuite.init(this.resourcePool, psConf);
-			this.protocolFactory = new VerYaoFactory();
+			this.protocolFactory = new VerYaoFactory(this.resourcePool.getMyId());
 			break;
 		default:
 			throw new IllegalArgumentException(

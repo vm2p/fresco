@@ -86,10 +86,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		while (iter.hasNext()) {
 			VerYaoProtocol gate = iter.next();
 			
-			if (gate.getGate().equals("INV")) {
-				System.out.println("");
-			}
-			
 			if (gate.getInarity() == 1) {
 				ret.add(gate.getIn_w()[0].getId());
 			}
@@ -110,7 +106,7 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		int max = Integer.max(Collections.max(a), Collections.max(b));
 		
 		for (int i = 0; i < max; i++) {
-			if (!(a.contains(i)|| b.contains(i))) {
+			if (! (a.contains(i) || b.contains(i))) {
 				ret.add(i);
 			}
 		}
@@ -124,7 +120,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		Iterator<VerYaoSBool> iter = VerYaoConfiguration.assoc_not_used.keySet().iterator();
 		while (iter.hasNext()) {
 			VerYaoSBool sbool = iter.next();
-			System.out.println(sbool.hashCode());
 			sbool.setId(notUsed.get(VerYaoConfiguration.assoc_not_used.get(sbool)));
 		}
 		
@@ -214,9 +209,7 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 	
 	private String gates2string(List<String> l) {
 		String ret = "";
-		//System.out.println(l.size() + " comparing to " + VerYaoConfiguration.q);
 		for (int i = 0; i < l.size(); i++) {
-			//System.out.println(l.get(i));
 			ret = ret + l.get(i) + ",";
 		}
 		
@@ -318,12 +311,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		int ret = 0;
 		int inp;
 		
-		//System.out.println("Good = " + g.toString());
-		
-		if (g.getIn_w()[1].getId() == 640) {
-			System.out.println("bota");
-		}
-		
 		if (inarity == 1) {
 			inp = in_w[0].getId();
 		}
@@ -398,9 +385,7 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 	
 	@Override
 	public EvaluationStatus evaluate(int round, ResourcePool resourcePool, SCENetwork network) {
-		
-		System.out.println("Round = " + round + " && ID = " + resourcePool.getMyId());
-		
+				
 		switch (resourcePool.getMyId()) {
 		case 1 :
 			switch (round) {
@@ -562,7 +547,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				/*
 				 * The final output of the protocol will be stored in the variable 'line'
 				 * */
-				System.out.println("Final: " + line);
 				VerYaoConfiguration.output = line;
 				done = true;
 				network.send(2, "");
@@ -581,10 +565,7 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				VerYaoConfiguration.n = VerYaoConfiguration.li1 + VerYaoConfiguration.li2;*/
 				VerYaoConfiguration.n = VerYaoConfiguration.li1 + VerYaoConfiguration.li2;
 				
-				System.out.println(VerYaoConfiguration.assoc.get(4736));
-				
-				System.out.println(VerYaoConfiguration.assoc.values().contains(384) + " && " + VerYaoConfiguration.assoc.values().contains(257));
-				
+								
  				ArrayList<Integer> notUsed = notUsed(VerYaoConfiguration.gates);
 				fixWireArrays(notUsed);
 				
@@ -618,7 +599,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				//System.out.println(Integer.max(maxList(lwires), maxLisx 256t(rwires)));
 				
 				//VerYaoConfiguration.gates = fixOutputIndex(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), Integer.max(maxList(VerYaoConfiguration.A), maxList(VerYaoConfiguration.B)) + 2 - VerYaoConfiguration.m, VerYaoConfiguration.m, VerYaoConfiguration.n);
-				System.out.println(VerYaoConfiguration.gates.size());
 				
 				
 				VerYaoConfiguration.A = getA(VerYaoConfiguration.gates);
@@ -661,7 +641,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				 * This is the combination of 'gates' with 'extrag'
 				 * */
 				VerYaoConfiguration.G = gates; //Stream.concat(gates.stream(), extrag.stream()).collect(Collectors.toList());
-				System.out.println(VerYaoConfiguration.G.get(VerYaoConfiguration.G.size() - 1));
 				/*
 				 * Builds the command the will call the OCaml program that executes the first step of the protocol.
 				 * 
@@ -678,27 +657,19 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				try {
 					p2stage1 = new FileWriter("p2stage1.dat");
 					//debug = new FileWriter("debug13.txt");
-					System.out.println("LI1 = " + VerYaoConfiguration.li1 + "\n");
 					p2stage1.write(VerYaoConfiguration.li1 + "\n");
-					System.out.println("I2 = " + parseInputs(VerYaoConfiguration.i2) + "\n");
 					p2stage1.write(parseInputs(VerYaoConfiguration.i2) + "\n");
-					System.out.println("N = " + VerYaoConfiguration.n + "\n");
 					p2stage1.write(VerYaoConfiguration.n + "\n");
-					System.out.println("M = " + VerYaoConfiguration.m + "\n");
 					p2stage1.write(VerYaoConfiguration.m + "\n");
-					System.out.println("Q = " + VerYaoConfiguration.q + "\n");
 					p2stage1.write(VerYaoConfiguration.q + "\n");
 					String aa = list2string(VerYaoConfiguration.A);
 					String bb = list2string(VerYaoConfiguration.B);
-					System.out.println("Size of A = " + list2string(VerYaoConfiguration.A));
-					System.out.println("Size of B = " + VerYaoConfiguration.B.size());
 					//debug.write("A = " + list2string(VerYaoConfiguration.A) + "\n");
 					p2stage1.write(aa + "\n");
 					//debug.write("B =" + list2string(VerYaoConfiguration.B) + "\n");
 					p2stage1.write(bb + "\n");
 					//debug.write("G = " + gates2string(VerYaoConfiguration.G) + "\n");
 					String gg = gates2string(VerYaoConfiguration.G);
-					System.out.println("Size of G = " + VerYaoConfiguration.G.size());
 					p2stage1.write(gg + "\n");
 					p2stage1.close();
 				} catch (IOException e3) {

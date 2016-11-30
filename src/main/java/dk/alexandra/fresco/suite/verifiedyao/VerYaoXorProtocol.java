@@ -44,9 +44,6 @@ public class VerYaoXorProtocol extends VerYaoProtocol implements XorProtocol {
 		
 		if (resourcePool.getMyId() == 2) {
 			
-			if (this.inLeft.getId() == 610) {
-				System.out.println(this);
-			}
 			
 			if (VerYaoConfiguration.q == 0) VerYaoConfiguration.alreadyInputs = true;
 			
@@ -73,7 +70,6 @@ public class VerYaoXorProtocol extends VerYaoProtocol implements XorProtocol {
 				newInRight = new VerYaoSBool(this.inRight.getId());
 				if (!VerYaoConfiguration.assoc_not_used.containsKey(this.inRight)) {
 					VerYaoConfiguration.assoc_not_used.putIfAbsent(newInRight, VerYaoConfiguration.index++);
-					System.out.println(this.inLeft.hashCode());
 				}
 			}
 			

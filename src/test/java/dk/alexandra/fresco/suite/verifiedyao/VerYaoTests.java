@@ -121,7 +121,6 @@ public class VerYaoTests {
 						boolean[] expected = ArrayUtils.addAll(toBoolean(outv), new boolean[]{false});
 						boolean[] actual = new boolean[out.length];
 						for (int i=0; i<out.length; i++) {
-							System.out.println(openedOut[i].hashCode());
 							actual[i] = openedOut[i].getValue();
 						}
 	
