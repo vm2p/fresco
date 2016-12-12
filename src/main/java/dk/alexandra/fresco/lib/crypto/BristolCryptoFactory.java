@@ -71,6 +71,10 @@ public class BristolCryptoFactory implements ProtocolFactory {
 		this.blf = blf;
 	}
 
+	public BristolCircuit getXorCircuit(SBool[] in1, SBool[] in2, SBool[] out) {
+		BristolCircuitParser parser = BristolCircuitParser.readCircuitDescription(this.blf, "circuits/xor.txt", in1, in2, out);
+		return new BristolCircuit(parser, in1, in2, out);
+	}
 	
 	/**
 	 * A circuit for 32x32 bit multiplication.

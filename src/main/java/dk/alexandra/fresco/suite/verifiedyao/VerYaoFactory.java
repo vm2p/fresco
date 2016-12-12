@@ -34,7 +34,7 @@ public class VerYaoFactory extends AbstractBinaryFactory implements BasicLogicFa
 
 	@Override
 	public CloseBoolProtocol getCloseProtocol(int source, OBool open, SBool closed) {
-		return new VerYaoCloseBoolProtocol(open,closed);
+		return new VerYaoCloseBoolProtocol(source, open,closed);
 	}
 
 	@Override
@@ -108,6 +108,7 @@ public class VerYaoFactory extends AbstractBinaryFactory implements BasicLogicFa
 		else {
 			for (int i=0; i<bools.length; i++) {
 				res[i] = new VerYaoSBool(this.counter++, bools[i]);
+				
 				//Integer val = VerYaoConfiguration.assoc.putIfAbsent(this.counter-1, VerYaoConfiguration.veryaocounter);
 				//if (val == null) VerYaoConfiguration.veryaocounter = VerYaoConfiguration.veryaocounter + 1;
 			}

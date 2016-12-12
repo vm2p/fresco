@@ -49,7 +49,7 @@ public class DummyNotProtocol extends DummyProtocol implements NotProtocol {
 	public EvaluationStatus evaluate(int round, ResourcePool resourcePool,
 			SCENetwork network) {
 		
-		if (resourcePool.getMyId() == 1) {
+		if (resourcePool.getMyId() == 2) {
 			try {
 				FileWriter fw = new FileWriter("circuit.txt", true);
 				fw.write(this + "\n");

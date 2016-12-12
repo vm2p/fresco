@@ -346,6 +346,7 @@ public class PrivateSetDemo implements Application {
 		// Construct protocol for opening up the result.
 		Protocol[][] opens = new Protocol[this.inSet.length*2][BLOCK_SIZE];
 		ProtocolProducer[] openInputs = new ProtocolProducer[this.inSet.length*2];
+		System.out.println("Number of open bools: " + this.inSet.length*2*BLOCK_SIZE);
 		for(int j = 0; j< this.inSet.length*2; j++){
 			for (int i=0; i<BLOCK_SIZE; i++) {
 				opens[j][i] = boolFactory.getOpenProtocol(outClosed[j][i], result[j][i]);

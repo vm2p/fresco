@@ -53,15 +53,31 @@ public class DummyCloseBoolProtocol extends DummyProtocol implements CloseBoolPr
 	@Override
 	public EvaluationStatus evaluate(int round, ResourcePool resourcePool, SCENetwork network) {
 		
-		if (resourcePool.getMyId() == 1) {
+		if (resourcePool.getMyId() == 2) {
+			if (this.input.isReady()) {
+				try {
+					FileWriter fw = new FileWriter("circuit.txt", true);
+					fw.write("INPUT2 = " + this + "\n");
+					fw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		else {
+			if (this.input.isReady()) {
 			try {
 				FileWriter fw = new FileWriter("circuit.txt", true);
-				fw.write(this + "\n");
+				fw.write("INPUT1 = " + this + "\n");
 				fw.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			}
+
 		}
 		
 		switch (round) {

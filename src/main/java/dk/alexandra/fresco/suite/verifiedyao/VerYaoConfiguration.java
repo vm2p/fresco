@@ -57,8 +57,18 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 	static int veryaocounter;
 	
 	static boolean alreadyInputs;
+	static boolean alreadyInputs2;
+	static int alreadyInputsI;
+	
+	static List<VerYaoSBool> outWires;
+	
+	static String test;
+	
+	static List<VerYaoSBool> inW1;
+	static List<VerYaoSBool> inW2;
 	
 	public VerYaoConfiguration() {
+		VerYaoConfiguration.test = "";
 		VerYaoConfiguration.li1 = 0;
 		VerYaoConfiguration.li2 = 0;
 		VerYaoConfiguration.n = 0;
@@ -76,6 +86,10 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 		VerYaoConfiguration.state2 = null;
 		VerYaoConfiguration.oBools = new ArrayList<VerYaoOBool>();
 		
+		inW1 = new ArrayList<VerYaoSBool>();
+		inW2 = new ArrayList<VerYaoSBool>();
+		outWires = new ArrayList<VerYaoSBool>();
+		
 		VerYaoConfiguration.output1 = new ArrayList<VerYaoOBool>();
 		VerYaoConfiguration.output2 = new ArrayList<VerYaoOBool>();
 		
@@ -88,6 +102,8 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 		VerYaoConfiguration.index = 0;
 		
 		VerYaoConfiguration.alreadyInputs = false;
+		VerYaoConfiguration.alreadyInputs2 = false;
+		VerYaoConfiguration.alreadyInputsI = 0;
 	}
 	
 	public static void setLi1 (int li1) {
@@ -121,11 +137,12 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 	public static String circuitToString() {
 		String ret;
 		
-		ret = "n = " + VerYaoConfiguration.n + "\nm = " + VerYaoConfiguration.m + "\nq = " + VerYaoConfiguration.q + "\nA = ";
-		
-		ret = ret + wiresToString(VerYaoConfiguration.A) + "\nB = ";
-		ret = ret + wiresToString(VerYaoConfiguration.B) + "\nG = ";
-		ret = ret + gatesToString(VerYaoConfiguration.G) + "\n";
+		ret = "i1<"+VerYaoConfiguration.li1+">\n"
+				+ "i2<"+VerYaoConfiguration.li2+">\n"
+				+ "fn = " + VerYaoConfiguration.n + "; " + VerYaoConfiguration.m + "; " + VerYaoConfiguration.q + "; " 
+				+ wiresToString(VerYaoConfiguration.A) + "; "
+				+ wiresToString(VerYaoConfiguration.B) + "; "
+				+ gatesToString(VerYaoConfiguration.G);
 		
 		return ret;
 	}

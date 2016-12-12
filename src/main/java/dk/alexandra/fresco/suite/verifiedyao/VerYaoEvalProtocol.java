@@ -120,6 +120,7 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		Iterator<VerYaoSBool> iter = VerYaoConfiguration.assoc_not_used.keySet().iterator();
 		while (iter.hasNext()) {
 			VerYaoSBool sbool = iter.next();
+			System.out.println(notUsed.get(VerYaoConfiguration.assoc_not_used.get(sbool)));
 			sbool.setId(notUsed.get(VerYaoConfiguration.assoc_not_used.get(sbool)));
 		}
 		
@@ -383,6 +384,30 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		return ret;
 	}
 	
+	private void fixInputWires() {
+		if (!VerYaoConfiguration.inW1.isEmpty()) {
+			for (int i = 0 ; i < VerYaoConfiguration.li1 ; i++) {
+				VerYaoConfiguration.inW1.get(i).setId(i);
+			}
+		}
+		if (!VerYaoConfiguration.inW2.isEmpty()) {
+			for (int i = 0 ; i < VerYaoConfiguration.li2 ; i++) {
+				VerYaoConfiguration.inW2.get(i).setId(i + VerYaoConfiguration.li1);
+			}
+		}
+	}
+	
+	private void fixOutputWires() {
+		
+		Iterator<VerYaoSBool> iter = VerYaoConfiguration.outWires.iterator();
+		
+		while (iter.hasNext()) {
+			VerYaoSBool next = iter.next();
+			next.setId(next.getId() + VerYaoConfiguration.alreadyInputsI);
+		}
+		
+	}
+	
 	@Override
 	public EvaluationStatus evaluate(int round, ResourcePool resourcePool, SCENetwork network) {
 				
@@ -394,7 +419,9 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				break;
 			case 1:
 				Serializable inmsg = "";
-								
+				
+				System.out.println("Input 1 = " + VerYaoConfiguration.i1);
+				
 				inmsg = network.receive(2);
 																
 				FileWriter p1stage1 = null;
@@ -563,11 +590,19 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				VerYaoConfiguration.i1 = "00000000000100010010001000110011010001000101010101100110011101111000100010011001101010101011101111001100110111011110111011111111";
 				VerYaoConfiguration.i2 = "00000000000000010000001000000011000001000000010100000110000001110000100000001001000010100000101100001100000011010000111000001111";
 				VerYaoConfiguration.n = VerYaoConfiguration.li1 + VerYaoConfiguration.li2;*/
+				//VerYaoConfiguration.li1 = 3;
+				//VerYaoConfiguration.li2 = 3;
+				//VerYaoConfiguration.i1 = "000";
+				//VerYaoConfiguration.i2 = "111";
+				System.out.println(VerYaoConfiguration.test);
 				VerYaoConfiguration.n = VerYaoConfiguration.li1 + VerYaoConfiguration.li2;
-				
+				//VerYaoConfiguration.q = VerYaoConfiguration.q - VerYaoConfiguration.n;
 								
- 				ArrayList<Integer> notUsed = notUsed(VerYaoConfiguration.gates);
-				fixWireArrays(notUsed);
+				System.out.println("Input 2 = " + VerYaoConfiguration.i2);
+				fixInputWires();
+				//fixOutputWires();
+ 				//ArrayList<Integer> notUsed = notUsed(VerYaoConfiguration.gates);
+				//fixWireArrays(notUsed);
 				
 				//VerYaoConfiguration.gates = adjust(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), VerYaoConfiguration.assoc);
 				
@@ -641,6 +676,16 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				 * This is the combination of 'gates' with 'extrag'
 				 * */
 				VerYaoConfiguration.G = gates; //Stream.concat(gates.stream(), extrag.stream()).collect(Collectors.toList());
+				
+				try {
+					FileWriter fw = new FileWriter("test.sfc");
+					fw.write(VerYaoConfiguration.circuitToString());
+					fw.close();
+					}
+					catch (Exception e) {
+						
+					}
+				
 				/*
 				 * Builds the command the will call the OCaml program that executes the first step of the protocol.
 				 * 
@@ -705,6 +750,16 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				try {
 					p.waitFor();
 				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				String line2 = null;
+				bri = new BufferedReader (new InputStreamReader(p.getErrorStream()));
+				try {
+					while ((line2 = bri.readLine()) != null) {
+					    System.out.println(line2);
+					  }
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

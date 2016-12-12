@@ -67,15 +67,29 @@ public class DummyOpenBoolProtocol extends DummyProtocol implements OpenBoolProt
 	public EvaluationStatus evaluate(int round, ResourcePool resourcePool,
 			SCENetwork network) {
 		
-		if (resourcePool.getMyId() == 1) {
+		if (resourcePool.getMyId() == 2) {
+			if (this.input.isReady()) {
 			try {
 				FileWriter fw = new FileWriter("circuit.txt", true);
-				fw.write(this + "\n");
+				fw.write("OUTPUT2 = " + this + "\n");
 				fw.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			}
+		}
+		else {
+			if (this.input.isReady()) {
+				try {
+					FileWriter fw = new FileWriter("circuit.txt", true);
+					fw.write("OUTPUT1 = " + this + "\n");
+					fw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				}
 		}
 		
 		boolean openToAll = target == -1;

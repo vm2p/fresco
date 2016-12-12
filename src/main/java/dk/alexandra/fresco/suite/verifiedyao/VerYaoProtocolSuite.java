@@ -61,6 +61,17 @@ public class VerYaoProtocolSuite implements ProtocolSuite {
 	public void finishedEval() {
 		VerYaoEvalProtocol eval = new VerYaoEvalProtocol();
 		
+		if (this.rp.getMyId() == 2) {
+		try {
+		FileWriter fw = new FileWriter("test.sfc");
+		fw.write(VerYaoConfiguration.circuitToString());
+		fw.close();
+		}
+		catch (Exception e) {
+			
+		}
+		}
+		
 		EvaluationStatus status;
 		int i = 0;
 		do {
@@ -98,6 +109,8 @@ public class VerYaoProtocolSuite implements ProtocolSuite {
 			protocolNetwork.setInput(inputForThisRound);
 			protocolNetwork.nextRound();
 		} while (status != EvaluationStatus.IS_DONE);
+		
+		System.out.println("OUTPUT = " + VerYaoConfiguration.output);
 		
 		for (i = 0; i < VerYaoConfiguration.output.length(); i ++) {
 			//VerYaoConfiguration.outGates.get(i).

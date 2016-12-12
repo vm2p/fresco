@@ -1,5 +1,8 @@
 package dk.alexandra.fresco.suite.verifiedyao;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 import dk.alexandra.fresco.framework.network.SCENetwork;
 import dk.alexandra.fresco.framework.sce.resources.ResourcePool;
 import dk.alexandra.fresco.framework.value.SBool;
@@ -39,20 +42,35 @@ public class VerYaoNotProtocol extends VerYaoProtocol implements NotProtocol {
 		
 		if (resourcePool.getMyId() == 2) {
 			
-			if (VerYaoConfiguration.q == 0) VerYaoConfiguration.alreadyInputs = true;
+			try {
+				FileWriter fw = new FileWriter("circuit2.txt", true);
+				fw.write(this + "\n");
+				fw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if (this.in.getId() == 112 || VerYaoConfiguration.q == 157 || this.in.getId() == 2 || VerYaoConfiguration.q == 197) {
+				System.out.println();
+			}
+			
+			if (VerYaoConfiguration.q >= 0) VerYaoConfiguration.alreadyInputs = true;
+			if (VerYaoConfiguration.q >= 0 && !VerYaoConfiguration.alreadyInputs) VerYaoConfiguration.alreadyInputs2 = false;
 			
 			if (VerYaoConfiguration.assoc.containsKey(this.in.getId())) {
 				//VerYaoConfiguration.A.add(VerYaoConfiguration.assoc.get(this.in.getId()));
 				//VerYaoConfiguration.B.add(VerYaoConfiguration.assoc.get(this.in.getId()));
-				newIn = new VerYaoSBool(VerYaoConfiguration.assoc.get(this.in.getId()));
+				this.in.setId(this.in.getId());
+				//newIn = new VerYaoSBool(VerYaoConfiguration.assoc.get(this.in.getId()));
 			}
 			else {
 				//VerYaoConfiguration.assoc.put(this.inLeft.getId(), Integer.max(Collections.max(VerYaoConfiguration.A), Integer.max(Collections.max(VerYaoConfiguration.B), Collections.max(VerYaoConfiguration.O))));
 				//VerYaoConfiguration.A.add(-1);
 				//VerYaoConfiguration.B.add(-1);
-				newIn = new VerYaoSBool(this.in.getId());
+				//newIn = new VerYaoSBool(this.in.getId());
 				if (VerYaoConfiguration.assoc_not_used.containsKey(this.in)) {
-					VerYaoConfiguration.assoc_not_used.putIfAbsent(newIn, VerYaoConfiguration.index++);
+					VerYaoConfiguration.assoc_not_used.putIfAbsent(this.in, VerYaoConfiguration.index++);
 				}
 			}
 			
@@ -60,15 +78,23 @@ public class VerYaoNotProtocol extends VerYaoProtocol implements NotProtocol {
 				VerYaoConfiguration.O.add(VerYaoConfiguration.assoc.get(this.out.getId())); //nunca pode bater aqui!!!!
 			}
 			else {
-				VerYaoConfiguration.assoc.put(this.out.getId(), VerYaoConfiguration.li1 + VerYaoConfiguration.li2 + VerYaoConfiguration.q);
+				
+				if (this.out.getId() == 194) {
+					System.out.println();
+				}
+				
+				//VerYaoConfiguration.assoc.put(this.out.getId(), VerYaoConfiguration.li1 + VerYaoConfiguration.li2 + VerYaoConfiguration.q);
 				//VerYaoConfiguration.O.add(VerYaoConfiguration.assoc.get(this.out.getId()));
-				newOut = new VerYaoSBool(VerYaoConfiguration.li1 + VerYaoConfiguration.li2 + VerYaoConfiguration.q);
+				
+				this.out.setId(VerYaoConfiguration.li1 + VerYaoConfiguration.li2 + VerYaoConfiguration.q);
+				//newOut = new VerYaoSBool(VerYaoConfiguration.li1 + VerYaoConfiguration.li2 + VerYaoConfiguration.q);
+				if (!VerYaoConfiguration.alreadyInputs2) VerYaoConfiguration.outWires.add(this.out);
 			}
 			
 			this.setGate("INV");
 			this.setQ(VerYaoConfiguration.q);
-			this.setIn_w(new VerYaoSBool[] {newIn});
-			this.setOut_w(new VerYaoSBool[] {newOut});
+			//this.setIn_w(new VerYaoSBool[] {newIn});
+			//this.setOut_w(new VerYaoSBool[] {newOut});
 			VerYaoConfiguration.q = VerYaoConfiguration.q + 1;
 			VerYaoConfiguration.gates.add(this);
 		}

@@ -13,7 +13,7 @@ public class VerYaoOBool implements OBool {
 
 	private static final long serialVersionUID = -4762843635114299987L;
 	
-	private final int id;
+	private int id;
 	
 	private Boolean value;
 
@@ -56,11 +56,20 @@ public class VerYaoOBool implements OBool {
 
 	@Override
 	public void setValue(boolean b) {
+		if (b) VerYaoConfiguration.test = VerYaoConfiguration.test + "1";
+		else VerYaoConfiguration.test = VerYaoConfiguration.test + "0";
+		
 		this.value = b;
 	}
 	
 	public int getId() {
+		
 		return this.id;
+	}
+	
+	public void setId(int id) {
+		
+		this.id = id;
 	}
 	
 	@Override

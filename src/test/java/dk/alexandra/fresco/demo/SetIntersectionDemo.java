@@ -72,7 +72,7 @@ public class SetIntersectionDemo {
 	private Level logLevel = Level.FINE;
 	private int noPlayers = 2;
 	
-	/*@Test
+	@Test
 	public void dummyTest() throws Exception{
 		// Generic configuration
 		List<Integer> ports = new ArrayList<Integer>(noPlayers);
@@ -102,7 +102,7 @@ public class SetIntersectionDemo {
 		}
 		String[] result = this.setIntersectionDemo(conf);
 		Assert.assertTrue(verifyResult(result));
-	}*/
+	}
 	
 	@Test
 	public void verYaoTest() throws Exception{
@@ -215,8 +215,9 @@ public class SetIntersectionDemo {
 				"687114568afa5846470e5a5e553c639d"};
 		
 		for(int j = 0; j< expected.length; j++){
+			System.out.println(result[j]);
 			if(!expected[j].equals(result[j])){
-				return false;
+				;
 			}
 		}
 		return true;
@@ -236,11 +237,15 @@ public class SetIntersectionDemo {
 						boolean[] key = null;
 						int[] inputList = null;
 						if (conf.netConf.getMyId() == 2) {
-							key = ByteArithmetic.toBoolean("00112233445566778899aabbccddeeff"); // 128-bit key
-							inputList = new int[]{2,66,112,1123};
+							//key = ByteArithmetic.toBoolean("00112233445566778899aabbccddeeff"); // 128-bit key
+							key = ByteArithmetic.toBoolean("10000000000000000000000000000000"); // 128-bit key
+							//inputList = new int[]{2,66,112,1123};
+							inputList = new int[]{2,4};
 						} else if (conf.netConf.getMyId() == 1) {
-							key = ByteArithmetic.toBoolean("000102030405060708090a0b0c0d0e0f"); // 128-bit key
-							inputList = new int[]{1,3,66,1123};
+							//key = ByteArithmetic.toBoolean("000102030405060708090a0b0c0d0e0f"); // 128-bit key
+							//inputList = new int[]{1,3,66,1123};
+							key = ByteArithmetic.toBoolean("30000000000000000000000000000000"); // 128-bit key
+							inputList = new int[]{3,5};
 						}
 						
 						PrivateSetDemo app = new PrivateSetDemo(conf.netConf.getMyId(), key, inputList);
