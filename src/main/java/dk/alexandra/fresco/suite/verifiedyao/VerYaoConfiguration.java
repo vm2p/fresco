@@ -32,7 +32,6 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 		
 	static List<Integer> A;
 	static List<Integer> B;
-	static List<Integer> O;
 	static List<String> G;
 		
 	static List<VerYaoProtocol> gates;
@@ -42,10 +41,7 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 	
 	static String [] state1;
 	static String [] state2;
-	
-	static List<VerYaoProtocol> outGates;
-	static List<VerYaoOBool> oBools;
-	
+		
 	static List<VerYaoOBool> output1;
 	static List<VerYaoOBool> output2;
 	
@@ -61,14 +57,11 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 	static int alreadyInputsI;
 	
 	static List<VerYaoSBool> outWires;
-	
-	static String test;
-	
+		
 	static List<VerYaoSBool> inW1;
 	static List<VerYaoSBool> inW2;
 	
 	public VerYaoConfiguration() {
-		VerYaoConfiguration.test = "";
 		VerYaoConfiguration.li1 = 0;
 		VerYaoConfiguration.li2 = 0;
 		VerYaoConfiguration.n = 0;
@@ -76,15 +69,12 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 		VerYaoConfiguration.q = 0;
 		VerYaoConfiguration.A = new ArrayList<Integer>();
 		VerYaoConfiguration.B = new ArrayList<Integer>();
-		VerYaoConfiguration.O = new ArrayList<Integer>();
 		VerYaoConfiguration.G = new ArrayList<String>();
 		VerYaoConfiguration.gates = new ArrayList<VerYaoProtocol>();
-		VerYaoConfiguration.outGates = new ArrayList<VerYaoProtocol>();
 		VerYaoConfiguration.i1 = "";
 		VerYaoConfiguration.i2 = "";
 		VerYaoConfiguration.state1 = null;
 		VerYaoConfiguration.state2 = null;
-		VerYaoConfiguration.oBools = new ArrayList<VerYaoOBool>();
 		
 		inW1 = new ArrayList<VerYaoSBool>();
 		inW2 = new ArrayList<VerYaoSBool>();
@@ -115,8 +105,9 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 		
 		Iterator<Integer> wiresIterator = wires.iterator();
 		while (wiresIterator.hasNext()) {
-
-			ret = ret + wiresIterator.next() + " ";
+			Integer next = wiresIterator.next();
+			if (wiresIterator.hasNext()) ret = ret + next + " ";
+			else ret = ret + next;
 		}
 		
 		return ret;
@@ -127,8 +118,9 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 		
 		Iterator<String> gatesIterator = gates.iterator();
 		while (gatesIterator.hasNext()) {
-
-			ret = ret + gatesIterator.next() + " ";
+			String next = gatesIterator.next();
+			if (gatesIterator.hasNext()) ret = ret + next + " ";
+			else ret = ret + next;
 		}
 		
 		return ret;

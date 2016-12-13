@@ -1,22 +1,13 @@
 package dk.alexandra.fresco.suite.verifiedyao;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import dk.alexandra.fresco.framework.MPCException;
 import dk.alexandra.fresco.framework.NativeProtocol.EvaluationStatus;
@@ -34,7 +25,6 @@ public class VerYaoProtocolSuite implements ProtocolSuite {
 	public VerYaoProtocolSuite() {
 	}
 	
-	
 	@Override
 	public void init(ResourcePool resourcePool, ProtocolSuiteConfiguration conf) {
 
@@ -46,31 +36,16 @@ public class VerYaoProtocolSuite implements ProtocolSuite {
 	@Override
 	public void synchronize(int gatesEvaluated) throws MPCException {
 		// TODO Auto-generated method stub
-		
 	}
 	
-	
-
 	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void finishedEval() {
 		VerYaoEvalProtocol eval = new VerYaoEvalProtocol();
-		
-		if (this.rp.getMyId() == 2) {
-		try {
-		FileWriter fw = new FileWriter("test.sfc");
-		fw.write(VerYaoConfiguration.circuitToString());
-		fw.close();
-		}
-		catch (Exception e) {
-			
-		}
-		}
 		
 		EvaluationStatus status;
 		int i = 0;
@@ -113,7 +88,6 @@ public class VerYaoProtocolSuite implements ProtocolSuite {
 		System.out.println("OUTPUT = " + VerYaoConfiguration.output);
 		
 		for (i = 0; i < VerYaoConfiguration.output.length(); i ++) {
-			//VerYaoConfiguration.outGates.get(i).
 			if (VerYaoConfiguration.output.charAt(i) == '1') {
 				VerYaoConfiguration.output1.get(i).setValue(true);
 				VerYaoConfiguration.output2.get(i).setValue(true);

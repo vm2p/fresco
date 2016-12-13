@@ -6,15 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import dk.alexandra.fresco.framework.MPCException;
 import dk.alexandra.fresco.framework.network.SCENetwork;
@@ -24,49 +18,6 @@ import dk.alexandra.fresco.framework.value.Value;
 public class VerYaoEvalProtocol extends VerYaoProtocol {
 
 	private boolean done = false;
-	
-	/**
-	 * Adjust the index of the wires. Test purposes only.
-	 * */
-	private List<VerYaoProtocol> adjust(List<VerYaoProtocol> gates, HashMap<Integer,Integer> assoc) {
-		List<VerYaoProtocol> ret = new ArrayList<VerYaoProtocol>();
-		
-		Iterator<VerYaoProtocol> gatesIterator = gates.iterator();
-		while (gatesIterator.hasNext()) {
-			
-			VerYaoProtocol gate = gatesIterator.next();
-			
-			VerYaoSBool newin0 = new VerYaoSBool(assoc.getOrDefault(gate.getIn_w()[0].getId(), gate.getIn_w()[0].getId()));
-			VerYaoSBool newin1 = new VerYaoSBool(assoc.getOrDefault(gate.getIn_w()[1].getId(), gate.getIn_w()[1].getId()));
-			VerYaoSBool newout = new VerYaoSBool(assoc.getOrDefault(gate.getOut_w()[0].getId(), gate.getOut_w()[0].getId()));
-			
-			/*if (assoc.containsKey(gate.getIn_w()[0].getId()) && assoc.containsKey(gate.getIn_w()[1].getId())) {
-				gate.setIn_w(new VerYaoSBool[] { new VerYaoSBool(assoc.get(gate.getIn_w()[0].getId())), new VerYaoSBool(assoc.get(gate.getIn_w()[1].getId())) });
-			}
-			else {
-				if (assoc.containsKey(gate.getIn_w()[0])) {
-					gate.setIn_w(new VerYaoSBool[] { new VerYaoSBool(assoc.get(gate.getIn_w()[0].getId())), new VerYaoSBool(gate.getIn_w()[1].getId()) });
-				}
-				else if (assoc.containsKey(gate.getIn_w()[1])) {
-					gate.setIn_w(new VerYaoSBool[] { new VerYaoSBool(gate.getIn_w()[0].getId()), new VerYaoSBool(assoc.get(gate.getIn_w()[1].getId())) });
-				}
-				else {
-					gate.setIn_w(new VerYaoSBool[] { new VerYaoSBool(gate.getIn_w()[0].getId()), new VerYaoSBool(gate.getIn_w()[1].getId()) });
-				}
-			}
-			
-			if (assoc.containsKey(gate.getOut_w()[0].getId())) {
-				gate.setOut_w(new VerYaoSBool[] { new VerYaoSBool(assoc.getgate.getOut_w()[0].getId()) });
-			}*/
-			
-			gate.setIn_w( new VerYaoSBool[] { newin0, newin1 } );
-			gate.setOut_w( new VerYaoSBool[] { newout } );
-			
-			ret.add(gate);
-		}
-		
-		return ret;
-	}
 	
 	private List<Integer> getA(List<VerYaoProtocol> gates) {
 		List<Integer> ret = new ArrayList<Integer>();
@@ -97,107 +48,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		return ret;
 	}
 	
-	private ArrayList<Integer> notUsed(List<VerYaoProtocol> gates) {
-		ArrayList<Integer> ret = new ArrayList<Integer>();
-		List<Integer> a = (ArrayList<Integer>) getA(gates);
-		a = a.subList(0, VerYaoConfiguration.q - VerYaoConfiguration.m);
-		List<Integer> b = (ArrayList<Integer>) getB(gates);
-		b = b.subList(0, VerYaoConfiguration.q - VerYaoConfiguration.m);
-		int max = Integer.max(Collections.max(a), Collections.max(b));
-		
-		for (int i = 0; i < max; i++) {
-			if (! (a.contains(i) || b.contains(i))) {
-				ret.add(i);
-			}
-		}
-		
-		return ret;
-	}
-	
-	private void fixWireArrays(ArrayList<Integer> notUsed) {
-		int c = 0;
-		
-		Iterator<VerYaoSBool> iter = VerYaoConfiguration.assoc_not_used.keySet().iterator();
-		while (iter.hasNext()) {
-			VerYaoSBool sbool = iter.next();
-			System.out.println(notUsed.get(VerYaoConfiguration.assoc_not_used.get(sbool)));
-			sbool.setId(notUsed.get(VerYaoConfiguration.assoc_not_used.get(sbool)));
-		}
-		
-		/*for (int i = 0; i < VerYaoConfiguration.A.size(); i++) {
-			if (VerYaoConfiguration.A.get(i) == - 1) {
-				VerYaoConfiguration.A.set(i, notUsed.get(c++));
-			}
-			if (VerYaoConfiguration.B.get(i) == - 1) {
-				VerYaoConfiguration.B.set(i, notUsed.get(c++));
-			}
-		}*/
-	}
-	
-	private List<VerYaoProtocol> fixOutputIndex(List<VerYaoProtocol> gates, int outstart, int outs, int ins) {
-		List<VerYaoProtocol> ret = new ArrayList<VerYaoProtocol>();
-		Hashtable<Integer,Integer> aux = new Hashtable<Integer,Integer>();
-		List<VerYaoProtocol> visited = new ArrayList<VerYaoProtocol>();
-		
-		for (int i = ins; i < outs+ins; i ++) {
-			aux.put(i, outstart);
-			outstart++;
-		}
-		
-		Iterator<VerYaoProtocol> gatesIterator = gates.iterator();
-		while (gatesIterator.hasNext()) {
-			
-			VerYaoProtocol gate = gatesIterator.next();
-			if (aux.containsKey(gate.getOut_w()[0].getId())) {
-				gate.setOut_w(new VerYaoSBool[] { new VerYaoSBool(aux.get(gate.getOut_w()[0].getId())) });
-				ret.add(gate);
-				visited.add(gate);
-			}
-			else {
-				ret.add(gate);
-			}
-		}
-		
-		Iterator<VerYaoProtocol> retIterator = ret.iterator();
-		while (retIterator.hasNext()) {
-			
-			VerYaoProtocol gate = retIterator.next();
-			if (aux.contains(gate.getOut_w()[0].getId()) && !visited.contains(gate)) {
-				gate.setOut_w(new VerYaoSBool[] { new VerYaoSBool(-1) });
-			}
-		}
-		
-		return ret;
-	}
-	
-	
-	/**
-	 * 
-	 * */
-	private List<Integer> outputWires (List<VerYaoProtocol> gates, int outstart, int outs, int ins) {
-		List<Integer> ret = new ArrayList<Integer>();
-		
-		ArrayList<VerYaoProtocol> gatescopy = new ArrayList<VerYaoProtocol>(gates);
-		ArrayList<VerYaoProtocol> visited = new ArrayList<VerYaoProtocol>();
-				
-		for (int i = outstart; i < outstart+outs; i++) {
-			try {
-				final int ii = i;
-				gatescopy.removeIf((ga) -> ga.getOut_w()[0].getId() != ii);
-				
-				visited.add(gatescopy.get(0));
-				
-				int outw = gatescopy.get(0).getQ();
-				gatescopy = new ArrayList<VerYaoProtocol>(gates);
-				ret.add(outw+ins);
-			} catch (Exception e) {
-				//e.printStackTrace();
-			}
-		}
-		
-		return ret;
-	}
-	
 	private String list2string(List<Integer> l) {
 		String ret = "";
 		
@@ -215,21 +65,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		}
 		
 		return ret.substring(0, ret.length() - 1);
-		
-		/*Iterator<String> lIterator = l.iterator();
-		while (lIterator.hasNext()) {
-			
-			String toAdd = lIterator.next();
-			
-			if (lIterator.hasNext() == true) {
-				ret = ret + toAdd + ",";
-			}
-			else {
-				ret = ret + toAdd;
-			}
-		}
-		
-		return ret;*/
 	}
 	
 	private String parseInputs (String input) {
@@ -244,108 +79,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 			}
 		
 			ret = ret + input.charAt(input.length() - 1);
-		}
-		
-		return ret;
-	}
-	
-	/**
-	 * Retrieves the first incoming wire of some gate, according to the
-	 * validity definitions of Foundations of Garbled Circuits
-	 * 
-	 * @param g
-	 * 		gate
-	 * @param ins
-	 * 		number of input wires
-	 * @param gates
-	 * 		complete list of all the gates of the circuit
-	 * */
-	private int wireA(VerYaoProtocol g, int ins, List<VerYaoProtocol> gates) {
-	
-		//ArrayList<VerYaoProtocol> gatescopy = new ArrayList<VerYaoProtocol>(gates);
-		
-		//System.out.println("Good " + g.toString());
-		
-		VerYaoSBool [] in_w = g.getIn_w();
-		int ret = 0;
-	
-		int inp = in_w[0].getId();
-	
-		if (inp < ins) {
-			ret = inp;
-		}
-		else {
-			try {
-				gates.removeIf(ga -> ga.getOut_w()[0].getId() != inp);
-				
-				if (gates.isEmpty()) {
-					ret = g.getIn_w()[0].getId();
-				}
-				else {
-					int feedw = gates.get(0).getQ();
-					ret = feedw + ins;
-				}
-			} catch (Exception e) {
-				System.out.println(g.toString());
-			}
-		}
-
-		return ret;
-	}
-	
-	/**
-	 * Retrieves the second incoming wire of some gate, according to the
-	 * validity definitions of Foundations of Garbled Circuits
-	 * 
-	 * @param g
-	 * 		gate
-	 * @param ins
-	 * 		number of input wires
-	 * @param gates
-	 * 		complete list of all the gates of the circuit
-	 * */
-	private int wireB(VerYaoProtocol g, int ins, List<VerYaoProtocol> gates) {
-				
-		//ArrayList<VerYaoProtocol> gatescopy = new ArrayList<VerYaoProtocol>(gates);
-		int inarity = g.getInarity();
-		VerYaoSBool [] in_w = g.getIn_w();
-		int ret = 0;
-		int inp;
-		
-		if (inarity == 1) {
-			inp = in_w[0].getId();
-		}
-		else {
-			inp = in_w[1].getId();
-		}
-		
-		gates.removeIf((ga) -> ga.getOut_w()[0].getId() != inp);
-		
-		if (inp < ins && gates.isEmpty()) {
-			ret = inp;
-		}
-		else {
-			try {
-				if (gates.isEmpty()) {
-					ret = g.getIn_w()[1].getId();
-				}
-				else {
-					int feedw = gates.get(0).getQ();
-					ret = feedw + ins;
-				}
-			} catch (Exception e) {
-				System.out.println("Bad = " + g.toString());
-			}
-		}
-		
-		return ret;
-	}
-	
-	private int maxList (List<Integer> l) {
-		int ret = -1;
-		
-		for (int i = 0; i < l.size(); i++) {
-			if (l.get(i) > ret) ret = l.get(i);
 		}
 		
 		return ret;
@@ -397,17 +130,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		}
 	}
 	
-	private void fixOutputWires() {
-		
-		Iterator<VerYaoSBool> iter = VerYaoConfiguration.outWires.iterator();
-		
-		while (iter.hasNext()) {
-			VerYaoSBool next = iter.next();
-			next.setId(next.getId() + VerYaoConfiguration.alreadyInputsI);
-		}
-		
-	}
-	
 	@Override
 	public EvaluationStatus evaluate(int round, ResourcePool resourcePool, SCENetwork network) {
 				
@@ -419,9 +141,7 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				break;
 			case 1:
 				Serializable inmsg = "";
-				
-				System.out.println("Input 1 = " + VerYaoConfiguration.i1);
-				
+								
 				inmsg = network.receive(2);
 																
 				FileWriter p1stage1 = null;
@@ -438,30 +158,15 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				String command = "./p1_stage1.native";
 				
 				Process p = null;
-				try {
-					p = Runtime.getRuntime().exec(command);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				BufferedReader bri = new BufferedReader (new InputStreamReader(p.getInputStream()));
-				
+				BufferedReader bri = null;
 				String line = null;
 				try {
+					p = Runtime.getRuntime().exec(command);
+					bri = new BufferedReader (new InputStreamReader(p.getInputStream()));
 					line = bri.readLine();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
 					bri.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
 					p.waitFor();
-				} catch (InterruptedException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -473,7 +178,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				String[] msg = line.split(" ");
 				String outmsg = msg[msg.length-1];
 				
-				/*FILE TEST HERE*/
 				FileWriter fw = null;
 				try {
 					fw = new FileWriter("state1.dat");
@@ -483,7 +187,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
-				/*END WRITING STATE TO FILE*/
 								
 				//send					
 				network.send(2, outmsg);
@@ -505,7 +208,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				fg = network.receive(2);
 				x2g = network.receive(2);
 				
-				/*FILE TEST HERE*/
 				fw = null;
 				try {
 					fw = new FileWriter("state2simpl.dat");
@@ -523,7 +225,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
-				/*END WRITING STATE TO FILE*/
 							
 				FileWriter p1stage2 = null;
 				try {
@@ -538,35 +239,15 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				command = "./p1_stage2.native";
 				
 				p = null;
+				bri = null;
+				line = null;
 				try {
 					p = Runtime.getRuntime().exec(command);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				bri = new BufferedReader (new InputStreamReader(p.getInputStream()));
-				
-				
-				/*
-				 * Captures the output of the OCaml program
-				 * */
-				line = null;
-				
-				try {
+					bri = new BufferedReader (new InputStreamReader(p.getInputStream()));
 					line = bri.readLine();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
 					bri.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
 					p.waitFor();
-				} catch (InterruptedException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -585,136 +266,40 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		case 2 :
 			switch (round) {
 			case 0:
-				/*VerYaoConfiguration.li1 = 128;
-				VerYaoConfiguration.li2 = 128;
-				VerYaoConfiguration.i1 = "00000000000100010010001000110011010001000101010101100110011101111000100010011001101010101011101111001100110111011110111011111111";
-				VerYaoConfiguration.i2 = "00000000000000010000001000000011000001000000010100000110000001110000100000001001000010100000101100001100000011010000111000001111";
-				VerYaoConfiguration.n = VerYaoConfiguration.li1 + VerYaoConfiguration.li2;*/
-				//VerYaoConfiguration.li1 = 3;
-				//VerYaoConfiguration.li2 = 3;
-				//VerYaoConfiguration.i1 = "000";
-				//VerYaoConfiguration.i2 = "111";
-				System.out.println(VerYaoConfiguration.test);
 				VerYaoConfiguration.n = VerYaoConfiguration.li1 + VerYaoConfiguration.li2;
-				//VerYaoConfiguration.q = VerYaoConfiguration.q - VerYaoConfiguration.n;
 								
-				System.out.println("Input 2 = " + VerYaoConfiguration.i2);
 				fixInputWires();
-				//fixOutputWires();
- 				//ArrayList<Integer> notUsed = notUsed(VerYaoConfiguration.gates);
-				//fixWireArrays(notUsed);
-				
-				//VerYaoConfiguration.gates = adjust(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), VerYaoConfiguration.assoc);
-				
-				//List<VerYaoProtocol> gatescopy = new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates);
-				
-				/*
-				 * Constructs the 'B' list, that contains the second incoming wires of every gate
-				 * */
-				//gatescopy = new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates);
-				//List<Integer> rwires = VerYaoConfiguration.gates.stream().map(g -> wireB(g, VerYaoConfiguration.n, new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates))).collect(Collectors.toList());
-				//System.out.println(gatescopy.equals(VerYaoConfiguration.gates));
-				
-				/*
-				 * Constructs the 'A' list, that contains the first incoming wires of every gate
-				 * */
-				
-				//List<Integer> lwires = VerYaoConfiguration.gates.stream().map(g -> wireA(g, VerYaoConfiguration.n, new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates))).collect(Collectors.toList());
-				//System.out.println(gatescopy.equals(VerYaoConfiguration.gates));
-				
-				
-				
-				
-				
-				/*
-				 * We need to fix some indexes of the output wires.
-				 * FRESCO changes the index of the output wires. We need to put them back in
-				 * place.
-				 * */
-				//System.out.println(Integer.max(maxList(lwires), maxLisx 256t(rwires)));
-				
-				//VerYaoConfiguration.gates = fixOutputIndex(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), Integer.max(maxList(VerYaoConfiguration.A), maxList(VerYaoConfiguration.B)) + 2 - VerYaoConfiguration.m, VerYaoConfiguration.m, VerYaoConfiguration.n);
-				
-				
+
 				VerYaoConfiguration.A = getA(VerYaoConfiguration.gates);
 				VerYaoConfiguration.B = getB(VerYaoConfiguration.gates);
 				
-				/*
-				 * Constructs extra wires, that will work as 'output' wires
-				 * */
-				//List<Integer> extraw = outputWires(new ArrayList<VerYaoProtocol>(VerYaoConfiguration.gates), Integer.max(maxList(VerYaoConfiguration.A), maxList(VerYaoConfiguration.B)) + 2 - VerYaoConfiguration.m, VerYaoConfiguration.m, VerYaoConfiguration.n);
-				//System.out.println(VerYaoConfiguration.gates.size());
-				/*
-				 * Constructs extra gates, that will work as 'output' gates.
-				 * 
-				 * Both 'extraw' and 'extrag' are needed by our OCaml formalisation.
-				 * */
-				List<String> extrag = new ArrayList<String>(Collections.nCopies(VerYaoConfiguration.m, "0001"));
-			
-				/*
-				 * Constructs the list of truth tables in a format readable by OCaml. Namely, this format implies that
-				 * all gates are in the 'format' of its 'output column'. 
-				 * 
-				 * For example, XOR will be represented as 0110.
-				 * */
-				List<String> gates = VerYaoConfiguration.gates.stream().map(g -> truthT(g)).collect(Collectors.toList());
+				VerYaoConfiguration.G = VerYaoConfiguration.gates.stream().map(g -> truthT(g)).collect(Collectors.toList()); 
 				
-				/*
-				 * Constructs the final list of the first incoming wires of every gate. 
-				 * This is the combination of 'lwires' with 'extraw'.
-				 * */
-				//VerYaoConfiguration.A = Stream.concat(lwires.stream(), extraw.stream()).collect(Collectors.toList());
-				//VerYaoConfiguration.A.addAll(extraw);
-				/*
-				 * Constructs the final list of the second incoming wires of every gate. 
-				 * This is the combination of 'rwires' with 'extraw'
-				 * */
-				//VerYaoConfiguration.B = Stream.concat(rwires.stream(), extraw.stream()).collect(Collectors.toList());
-				//VerYaoConfiguration.B.addAll(extraw);
-				/*
-				 * Constructs the final list of gates.
-				 * This is the combination of 'gates' with 'extrag'
-				 * */
-				VerYaoConfiguration.G = gates; //Stream.concat(gates.stream(), extrag.stream()).collect(Collectors.toList());
-				
-				try {
-					FileWriter fw = new FileWriter("test.sfc");
-					fw.write(VerYaoConfiguration.circuitToString());
-					fw.close();
+					try {
+						FileWriter fw = new FileWriter("test.sfc");
+						fw.write(VerYaoConfiguration.circuitToString());
+						fw.close();
 					}
 					catch (Exception e) {
 						
 					}
 				
-				/*
-				 * Builds the command the will call the OCaml program that executes the first step of the protocol.
-				 * 
-				 * The command is given:
-				 	* Input of party 1
-				 	* The configuration of the circuit (Bellare format)
-				 * 
-				 * It will return:
-				 	* The state of party 1
-				 	* The protocol message to be sent to party 2 
-				 * */
+				String aa, bb, gg;
+				
+				aa = list2string(VerYaoConfiguration.A);
+				bb = list2string(VerYaoConfiguration.B);
+				gg = gates2string(VerYaoConfiguration.G);
+				
 				FileWriter p2stage1 = null;
-				//FileWriter debug = null;
 				try {
 					p2stage1 = new FileWriter("p2stage1.dat");
-					//debug = new FileWriter("debug13.txt");
 					p2stage1.write(VerYaoConfiguration.li1 + "\n");
 					p2stage1.write(parseInputs(VerYaoConfiguration.i2) + "\n");
 					p2stage1.write(VerYaoConfiguration.n + "\n");
 					p2stage1.write(VerYaoConfiguration.m + "\n");
 					p2stage1.write(VerYaoConfiguration.q + "\n");
-					String aa = list2string(VerYaoConfiguration.A);
-					String bb = list2string(VerYaoConfiguration.B);
-					//debug.write("A = " + list2string(VerYaoConfiguration.A) + "\n");
 					p2stage1.write(aa + "\n");
-					//debug.write("B =" + list2string(VerYaoConfiguration.B) + "\n");
 					p2stage1.write(bb + "\n");
-					//debug.write("G = " + gates2string(VerYaoConfiguration.G) + "\n");
-					String gg = gates2string(VerYaoConfiguration.G);
 					p2stage1.write(gg + "\n");
 					p2stage1.close();
 				} catch (IOException e3) {
@@ -725,41 +310,15 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				String command = "./p2_stage1.native";
 				
 				Process p = null;
-				try {
-					p = Runtime.getRuntime().exec(command);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				BufferedReader bri = new BufferedReader (new InputStreamReader(p.getInputStream()));
-				
+				BufferedReader bri = null;
 				String line = null;
 				try {
+					p = Runtime.getRuntime().exec(command);
+					bri = new BufferedReader (new InputStreamReader(p.getInputStream()));
 					line = bri.readLine();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
 					bri.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
 					p.waitFor();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				String line2 = null;
-				bri = new BufferedReader (new InputStreamReader(p.getErrorStream()));
-				try {
-					while ((line2 = bri.readLine()) != null) {
-					    System.out.println(line2);
-					  }
-				} catch (IOException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -769,24 +328,15 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				FileWriter fw = null;
 				try {
 					fw = new FileWriter("state2.dat");
-					//toks
 					fw.write(output[0] + "\n");
-					//gps
 					fw.write(output[1] + "\n");
-					
 					fw.write(VerYaoConfiguration.n + "\n");
 					fw.write(VerYaoConfiguration.m + "\n");
 					fw.write(VerYaoConfiguration.q + "\n");
-										
-					fw.write(list2string(VerYaoConfiguration.A) + "\n");					
-					
-					fw.write(list2string(VerYaoConfiguration.B) + "\n");
-					//fung
+					fw.write(aa + "\n");					
+					fw.write(bb + "\n");
 					fw.write(output[2] + "\n");
-					
-					//x2g
 					fw.write(output[3] + "\n");
-					//rand2
 					fw.write(output[4] + "\n");
 					fw.close();
 				} catch (IOException e2) {
@@ -819,65 +369,29 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				command = "./p2_stage2.native";
 								
 				p = null;
-				try {
-					p = Runtime.getRuntime().exec(command);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				bri = new BufferedReader (new InputStreamReader(p.getInputStream()));
-				
-				/*
-				 * Captures the output of the OCaml program
-				 * */
+				bri = null;
 				line = null;
 				try {
+					p = Runtime.getRuntime().exec(command);
+					bri = new BufferedReader (new InputStreamReader(p.getInputStream()));
 					line = bri.readLine();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				try {
 					bri.close();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				try {
 					p.waitFor();
-				} catch (InterruptedException e1) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					e.printStackTrace();
 				}
 								
-				/*
-				 * OCaml outputs a series of values separated by spaces " ".
-				 * In this case, no division is needed because everything needs to be
-				 * sent to party 2.
-				 * */
 				output = line.split(" ");
-								
-				/*
-				 * Sends the third message of the protocol to party 2, throughout 
-				 * channel 0.
-				 * */				
-				//System.out.println("CY = " + output[0]);
+			
 				network.send(1, output[0]);
-				//System.out.println("E = " + output[1]);
 				network.send(1, output[1]);
-				//System.out.println("N = " + output[2]);
 				network.send(1, output[2]);
-				//System.out.println("M = " + output[3]);
 				network.send(1, output[3]);
-				//System.out.println("Q = " + output[4]);
 				network.send(1, output[4]);
-				//System.out.println("AA = " + output[5]);
 				network.send(1, output[5]);
-				//System.out.println("BB = " + output[6]);
 				network.send(1, output[6]);
-				//System.out.println("FG = " + output[7]);
 				network.send(1, output[7]);
-				//System.out.println("X2G = " + output[8]);
 				if (output.length == 9) network.send(1, output[8]);
 				else network.send(1, "");
 				

@@ -33,7 +33,12 @@ import dk.alexandra.fresco.framework.sce.configuration.SCEConfiguration;
 
 public class DummyConfiguration implements ProtocolSuiteConfiguration {
 
+	static String input1;
+	static String input2;
+	
 	public static ProtocolSuiteConfiguration fromCmdLine(SCEConfiguration sceConf, CommandLine cmd) {
+		DummyConfiguration.input1 = "";
+		DummyConfiguration.input2 = "";
 		return new DummyConfiguration();
 	}
 	

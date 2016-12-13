@@ -56,9 +56,6 @@ public class VerYaoOBool implements OBool {
 
 	@Override
 	public void setValue(boolean b) {
-		if (b) VerYaoConfiguration.test = VerYaoConfiguration.test + "1";
-		else VerYaoConfiguration.test = VerYaoConfiguration.test + "0";
-		
 		this.value = b;
 	}
 	

@@ -1,8 +1,5 @@
 package dk.alexandra.fresco.suite.verifiedyao;
 
-import java.io.FileWriter;
-import java.io.IOException;
-
 import dk.alexandra.fresco.framework.network.SCENetwork;
 import dk.alexandra.fresco.framework.sce.resources.ResourcePool;
 import dk.alexandra.fresco.framework.value.OBool;
@@ -24,51 +21,17 @@ public class VerYaoOpenBoolProtocol extends VerYaoProtocol implements OpenBoolPr
 	@Override
 	public EvaluationStatus evaluate(int round, ResourcePool resourcePool,
 			SCENetwork network) {
-		
-		VerYaoSBool newIn = null;
-		
+				
 		if (resourcePool.getMyId() == 1) {
-				try {
-					FileWriter fw = new FileWriter("circuit2.txt", true);
-					fw.write("OUTPUT1 = " + this + "\n");
-					fw.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			VerYaoConfiguration.output1.add(this.out);
 		}
 		if (resourcePool.getMyId() == 2) {
-			
-				try {
-					FileWriter fw = new FileWriter("circuit2.txt", true);
-					fw.write("OUTPUT2 = " + this + "\n");
-					fw.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-						
-			/*if (VerYaoConfiguration.assoc.containsKey(this.in.getId())) {
-				//VerYaoConfiguration.A.add(VerYaoConfiguration.assoc.get(this.inLeft.getId()));
-				newIn = new VerYaoSBool(VerYaoConfiguration.assoc.get(this.in.getId()));
-			}
-			else {
-				//VerYaoConfiguration.assoc.put(this.inLeft.getId(), Integer.max(Collections.max(VerYaoConfiguration.A), Integer.max(Collections.max(VerYaoConfiguration.B), Collections.max(VerYaoConfiguration.O))));
-				//VerYaoConfiguration.A.add(-1);
-				newIn = new VerYaoSBool(this.in.getId());
-				if (!VerYaoConfiguration.assoc_not_used.containsKey(this.in)) {
-					VerYaoConfiguration.assoc_not_used.put(newIn, VerYaoConfiguration.index++);
-				}
-			}*/
 			
 			VerYaoConfiguration.m = VerYaoConfiguration.m + 1;
 			VerYaoConfiguration.q = VerYaoConfiguration.q + 1;
 			this.setGate("AND");
 			this.setIn_w(new VerYaoSBool[] {this.in});
 			VerYaoConfiguration.gates.add(this);
-			VerYaoConfiguration.outGates.add(this);
-			VerYaoConfiguration.oBools.add(this.out);
 			
 			VerYaoConfiguration.output2.add(this.out);
 		}

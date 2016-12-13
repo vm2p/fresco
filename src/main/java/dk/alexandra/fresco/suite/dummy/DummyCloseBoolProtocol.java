@@ -59,6 +59,10 @@ public class DummyCloseBoolProtocol extends DummyProtocol implements CloseBoolPr
 					FileWriter fw = new FileWriter("circuit.txt", true);
 					fw.write("INPUT2 = " + this + "\n");
 					fw.close();
+					
+					if (this.input.getValue()) DummyConfiguration.input2 = DummyConfiguration.input2 + "1";
+					else DummyConfiguration.input2 = DummyConfiguration.input2 + "0";
+					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -72,6 +76,10 @@ public class DummyCloseBoolProtocol extends DummyProtocol implements CloseBoolPr
 				FileWriter fw = new FileWriter("circuit.txt", true);
 				fw.write("INPUT1 = " + this + "\n");
 				fw.close();
+				
+				if (this.input.getValue()) DummyConfiguration.input1 = DummyConfiguration.input1 + "1";
+				else DummyConfiguration.input1 = DummyConfiguration.input1 + "0";
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

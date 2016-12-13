@@ -58,21 +58,11 @@ public class VerYaoFactory extends AbstractBinaryFactory implements BasicLogicFa
 		for (int i=0; i<amount; i++) {
 			res[i] = getSBool();
 		}
-		//VerYaoConfiguration.n = VerYaoConfiguration.n + amount;
 		return res;
 	}
 
 	@Override
-	public SBool getKnownConstantSBool(boolean b) {
-		
-		/*if (this.id == 1) {
-			VerYaoConfiguration.i1 = VerYaoConfiguration.visited1 ? VerYaoConfiguration.i1 : VerYaoConfiguration.i1 + (b ? "1" : "0");
-			VerYaoConfiguration.li1 = VerYaoConfiguration.visited1 ? VerYaoConfiguration.li1 : VerYaoConfiguration.li1 + 1;
-		}
-		else {
-			VerYaoConfiguration.i2 = VerYaoConfiguration.visited2 ? VerYaoConfiguration.i2 : VerYaoConfiguration.i2 + (b ? "1" : "0");
-			VerYaoConfiguration.li2 = VerYaoConfiguration.visited2 ? VerYaoConfiguration.li2 : VerYaoConfiguration.li2 + 1;
-		}*/		
+	public SBool getKnownConstantSBool(boolean b) {	
 		
 		return new VerYaoSBool(this.counter++, b);
 	}
@@ -81,22 +71,6 @@ public class VerYaoFactory extends AbstractBinaryFactory implements BasicLogicFa
 	public SBool[] getKnownConstantSBools(boolean[] bools) {
 		
 		VerYaoSBool[] res = new VerYaoSBool[bools.length];
-		/*System.out.println(this.id);
-		
-		if (this.id == 1) {
-			for (int i=0; i<bools.length; i++) {
-				res[i] = new VerYaoSBool(this.counter++, bools[i]);
-				VerYaoConfiguration.i1 = VerYaoConfiguration.visited1 ? VerYaoConfiguration.i1 : VerYaoConfiguration.i1 + boolToString(bools[i]);
-			}
-			VerYaoConfiguration.li1 = VerYaoConfiguration.visited1 ? VerYaoConfiguration.li1 : VerYaoConfiguration.li1 + bools.length;
-		}
-		else {
-			for (int i=0; i<bools.length; i++) {
-				res[i] = new VerYaoSBool(this.counter++, bools[i]);
-				VerYaoConfiguration.i2 = VerYaoConfiguration.visited2 ? VerYaoConfiguration.i2 : VerYaoConfiguration.i2 + boolToString(bools[i]);
-			}
-			VerYaoConfiguration.li2 = VerYaoConfiguration.visited2 ? VerYaoConfiguration.li2 : VerYaoConfiguration.li2 + bools.length;
-		}*/
 		
 		if (this.id == 2) {
 			for (int i=0; i<bools.length; i++) {
@@ -108,47 +82,9 @@ public class VerYaoFactory extends AbstractBinaryFactory implements BasicLogicFa
 		else {
 			for (int i=0; i<bools.length; i++) {
 				res[i] = new VerYaoSBool(this.counter++, bools[i]);
-				
-				//Integer val = VerYaoConfiguration.assoc.putIfAbsent(this.counter-1, VerYaoConfiguration.veryaocounter);
-				//if (val == null) VerYaoConfiguration.veryaocounter = VerYaoConfiguration.veryaocounter + 1;
 			}
 		}
-		System.out.println(this.counter + " " + VerYaoConfiguration.veryaocounter);
-		/*if (this.id == 1) {
-			for (int i=0; i<bools.length; i++) {
-				res[i] = new VerYaoSBool(this.counter++, bools[i]);
-				VerYaoConfiguration.i1 = VerYaoConfiguration.visited1 ? VerYaoConfiguration.i1 : VerYaoConfiguration.i1 + boolToString(bools[i]);
-			}
-			VerYaoConfiguration.li1 = VerYaoConfiguration.visited1 ? VerYaoConfiguration.li1 : VerYaoConfiguration.li1 + bools.length;
-			VerYaoConfiguration.visited1 = true;
-		}
-		else {
-			for (int i=0; i<bools.length; i++) {
-				res[i] = new VerYaoSBool(this.counter++, bools[i]);
-				VerYaoConfiguration.i2 = VerYaoConfiguration.visited2 ? VerYaoConfiguration.i2 : VerYaoConfiguration.i2 + boolToString(bools[i]);
-			}
-			VerYaoConfiguration.li2 = VerYaoConfiguration.visited2 ? VerYaoConfiguration.li2 : VerYaoConfiguration.li2 + bools.length;
-			VerYaoConfiguration.visited2 = true;
-		}*/
 		
-		/*if (this.id == 1) {
-			for (int i=0; i<bools.length; i++) {
-				res[i] = new VerYaoSBool(this.counter++, bools[i]);
-				VerYaoConfiguration.i1 = VerYaoConfiguration.visited1 ? VerYaoConfiguration.i1 : VerYaoConfiguration.i1 + boolToString(bools[i]);
-			}
-			VerYaoConfiguration.li1 = VerYaoConfiguration.visited1 ? VerYaoConfiguration.li1 : VerYaoConfiguration.li1 + bools.length;
-			VerYaoConfiguration.visited1 = true;
-		}
-		else {
-			if (this.id == 2) {
-				for (int i=0; i<bools.length; i++) {
-					res[i] = new VerYaoSBool(this.counter++, bools[i]);
-					VerYaoConfiguration.i2 = VerYaoConfiguration.visited2 ? VerYaoConfiguration.i2 : VerYaoConfiguration.i2 + boolToString(bools[i]);
-				}
-				VerYaoConfiguration.li2 = VerYaoConfiguration.visited2 ? VerYaoConfiguration.li2 : VerYaoConfiguration.li2 + bools.length;
-				VerYaoConfiguration.visited2 = true;
-			}
-		}*/
 		return res;
 	}
 

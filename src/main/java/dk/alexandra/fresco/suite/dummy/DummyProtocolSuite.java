@@ -30,6 +30,7 @@ import dk.alexandra.fresco.framework.MPCException;
 import dk.alexandra.fresco.framework.sce.configuration.ProtocolSuiteConfiguration;
 import dk.alexandra.fresco.framework.sce.resources.ResourcePool;
 import dk.alexandra.fresco.suite.ProtocolSuite;
+import dk.alexandra.fresco.suite.verifiedyao.VerYaoConfiguration;
 
 
 /**
@@ -55,6 +56,8 @@ public class DummyProtocolSuite implements ProtocolSuite {
 	@Override
 	public void finishedEval() {
 		// No finish needed.
+		System.out.println("Input 2 = " + DummyConfiguration.input2);
+		System.out.println("Input 1 = " + DummyConfiguration.input1);
 	}
 
 	@Override
