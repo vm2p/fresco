@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,39 +50,53 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 	}
 	
 	private String list2string(List<Integer> l) {
-		String ret = "";
+		StringBuilder ret = new StringBuilder();
+		Iterator<Integer> iter = l.iterator();
 		
-		for (int i = 0; i < l.size(); i ++) {
-			ret = ret + l.get(i) + ",";
+		while (iter.hasNext()) {
+			Integer next = iter.next();
+			if (iter.hasNext()) ret.append(next).append(",");
+			else ret.append(next);
 		}
 		
-		return ret.substring(0, ret.length() - 1);
+		return ret.toString();
 	}
 	
 	private String gates2string(List<String> l) {
-		String ret = "";
-		for (int i = 0; i < l.size(); i++) {
-			ret = ret + l.get(i) + ",";
+		StringBuilder ret = new StringBuilder();
+		Iterator<String> iter = l.iterator();
+		
+		while (iter.hasNext()) {
+			String next = iter.next();
+			if (iter.hasNext()) ret.append(next).append(",");
+			else ret.append(next);
 		}
 		
-		return ret.substring(0, ret.length() - 1);
+		return ret.toString();
 	}
 	
-	private String parseInputs (String input) {
-		String ret = "";
+	private String parseInputs (String input) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		StringBuilder ret = new StringBuilder();
 		
 		if (input.equals("")) {
-			ret = "empty";
+			ret.append("empty");
 		}
 		else {
-			for (int i = 0; i < input.length() - 1; i++) {
-				ret = ret + input.charAt(i) + ",";
-			}
+			
+			Field field = String.class.getDeclaredField("value");
+			field.setAccessible(true);
+			
+			char[] chars = (char[]) field.get(input);
+			int len = chars.length;
+			
+			for (int i = 0; i < len-1; i++) {
+				ret.append(chars[i]).append(",");
+	       }
 		
-			ret = ret + input.charAt(input.length() - 1);
+			ret.append(chars[len-1]);
 		}
 		
-		return ret;
+		return ret.toString();
 	}
 	
 	/**
@@ -147,12 +162,24 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				FileWriter p1stage1 = null;
 				try {
 					p1stage1 = new FileWriter("p1stage1.dat");
-					p1stage1.write(parseInputs(VerYaoConfiguration.i1) + "\n");
+					p1stage1.write(parseInputs(VerYaoConfiguration.i1.toString()) + "\n");
 					p1stage1.write(inmsg + "\n");
 					p1stage1.close();
 				} catch (IOException e3) {
 					// TODO Auto-generated catch block
 					e3.printStackTrace();
+				} catch (NoSuchFieldException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				
 				String command = "./p1_stage1.native";
@@ -229,11 +256,23 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				FileWriter p1stage2 = null;
 				try {
 					p1stage2 = new FileWriter("p1stage2.dat");
-					p1stage2.write(parseInputs(VerYaoConfiguration.i1) + "\n");
+					p1stage2.write(parseInputs(VerYaoConfiguration.i1.toString()) + "\n");
 					p1stage2.close();
 				} catch (IOException e3) {
 					// TODO Auto-generated catch block
 					e3.printStackTrace();
+				} catch (NoSuchFieldException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				
 				command = "./p1_stage2.native";
@@ -255,7 +294,7 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				/*
 				 * The final output of the protocol will be stored in the variable 'line'
 				 * */
-				VerYaoConfiguration.output = line;
+				VerYaoConfiguration.output.append(line);
 				done = true;
 				network.send(2, "");
 				break;
@@ -275,15 +314,6 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				
 				VerYaoConfiguration.G = VerYaoConfiguration.gates.stream().map(g -> truthT(g)).collect(Collectors.toList()); 
 				
-					try {
-						FileWriter fw = new FileWriter("test.sfc");
-						fw.write(VerYaoConfiguration.circuitToString());
-						fw.close();
-					}
-					catch (Exception e) {
-						
-					}
-				
 				String aa, bb, gg;
 				
 				aa = list2string(VerYaoConfiguration.A);
@@ -294,7 +324,7 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				try {
 					p2stage1 = new FileWriter("p2stage1.dat");
 					p2stage1.write(VerYaoConfiguration.li1 + "\n");
-					p2stage1.write(parseInputs(VerYaoConfiguration.i2) + "\n");
+					p2stage1.write(parseInputs(VerYaoConfiguration.i2.toString()) + "\n");
 					p2stage1.write(VerYaoConfiguration.n + "\n");
 					p2stage1.write(VerYaoConfiguration.m + "\n");
 					p2stage1.write(VerYaoConfiguration.q + "\n");
@@ -305,6 +335,18 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				} catch (IOException e3) {
 					// TODO Auto-generated catch block
 					e3.printStackTrace();
+				} catch (NoSuchFieldException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				
 				String command = "./p2_stage1.native";

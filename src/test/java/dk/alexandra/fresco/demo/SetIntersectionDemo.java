@@ -237,17 +237,15 @@ public class SetIntersectionDemo {
 						boolean[] key = null;
 						int[] inputList = null;
 						if (conf.netConf.getMyId() == 2) {
-							//key = ByteArithmetic.toBoolean("00112233445566778899aabbccddeeff"); // 128-bit key
-							System.out.println(key);
 							key = ByteArithmetic.toBoolean("00112233445566778899aabbccddeeff"); // 128-bit key
+							//key = ByteArithmetic.toBoolean("00112233445566778899aabbccddeeff"); // 128-bit key
 							//inputList = new int[]{2,66,112,1123};
-							inputList = new int[]{0,2};
+							inputList = new int[]{0};
 						} else if (conf.netConf.getMyId() == 1) {
-							key = ByteArithmetic.toBoolean("74dd814f91cafb5fafcb4473c96b9b14"); // 128-bit key
+							//key = ByteArithmetic.toBoolean("74dd814f91cafb5fafcb4473c96b9b14"); // 128-bit key
 							//inputList = new int[]{1,3,66,1123};
-							//key = ByteArithmetic.toBoolean("000102030405060708090a0b0c0d0e0f"); // 128-bit key
-							System.out.println(key);
-							inputList = new int[]{1,2};
+							key = ByteArithmetic.toBoolean("000102030405060708090a0b0c0d0e0f"); // 128-bit key
+							inputList = new int[]{0};
 						}
 						
 						PrivateSetDemo app = new PrivateSetDemo(conf.netConf.getMyId(), key, inputList);

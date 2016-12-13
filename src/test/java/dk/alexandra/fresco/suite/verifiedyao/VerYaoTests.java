@@ -88,12 +88,18 @@ public class VerYaoTests {
 							
 							boolean[] in1_val = toBoolean(inv1);
 							in1 = bool.getKnownConstantSBools(in1_val);
-							VerYaoConfiguration.li1 = 32;
-							VerYaoConfiguration.i1 = "00000000000000000000000000000000";
 							boolean[] in2_val = toBoolean(inv2);
 							in2 = bool.getKnownConstantSBools(in2_val);
+							
+							VerYaoConfiguration.li1 = 32;
 							VerYaoConfiguration.li2 = 32;
-							VerYaoConfiguration.i2 = "00000000000000000000000000000000";
+							
+							if (conf.netConf.getMyId() == 1) {
+								VerYaoConfiguration.i1.append("00000000000000000000000000000000");
+							}
+							else {
+								VerYaoConfiguration.i2.append("00000000000000000000000000000000");
+							}
 							out = bool.getSBools(33);
 
 							// Create mult circuit.
@@ -159,12 +165,19 @@ public class VerYaoTests {
 							
 							boolean[] in1_val = toBoolean(inv1);
 							in1 = bool.getKnownConstantSBools(in1_val);
-							VerYaoConfiguration.li1 = 32;
-							VerYaoConfiguration.i1 = "00000000000000000000000000000000";
 							boolean[] in2_val = toBoolean(inv2);
 							in2 = bool.getKnownConstantSBools(in2_val);
+
+							VerYaoConfiguration.li1 = 32;
 							VerYaoConfiguration.li2 = 32;
-							VerYaoConfiguration.i2 = "00000000000000000000000000000000";
+							
+							if (conf.netConf.getMyId() == 1) {
+								VerYaoConfiguration.i1.append("00000000000000000000000000000000");
+							}
+							else {
+								VerYaoConfiguration.i2.append("00000000000000000000000000000000");
+							}
+							
 							out = bool.getSBools(64);
 
 							// Create mult circuit.
@@ -238,10 +251,10 @@ public class VerYaoTests {
 							boolean[] in_val = toBoolean(plainVec);
 							
 							plain = prov.getKnownConstantSBools(in_val);
-							VerYaoConfiguration.i1 = fromBoolean(in_val);
+							if (conf.netConf.getMyId() == 1) VerYaoConfiguration.i1.append(fromBoolean(in_val));
 							VerYaoConfiguration.li1 = 128;
 							key = prov.getKnownConstantSBools(key_val);
-							VerYaoConfiguration.i2 = fromBoolean(key_val);
+							if (conf.netConf.getMyId() == 2) VerYaoConfiguration.i2.append(fromBoolean(key_val));
 							VerYaoConfiguration.li2 = 128;
 							cipher = prov.getSBools(128);
 
@@ -302,13 +315,18 @@ public class VerYaoTests {
 
 							boolean[] in1_val = toBoolean(plainV);
 							plain = bool.getKnownConstantSBools(in1_val);
-							VerYaoConfiguration.i1 = fromBoolean(in1_val);
-							VerYaoConfiguration.li1 = VerYaoConfiguration.i1.length();
 							boolean[] in2_val = toBoolean(keyV);
 							key = bool.getKnownConstantSBools(in2_val);
-							VerYaoConfiguration.i2 = fromBoolean(in2_val);
-							VerYaoConfiguration.li2 = VerYaoConfiguration.i2.length();
 							cipher = bool.getSBools(64);
+							
+							if (conf.netConf.getMyId() == 1) {
+								VerYaoConfiguration.i1.append(fromBoolean(in1_val));
+								VerYaoConfiguration.li1 = VerYaoConfiguration.i1.length();
+							}
+							else {
+								VerYaoConfiguration.i2.append(fromBoolean(in2_val));
+								VerYaoConfiguration.li2 = VerYaoConfiguration.i2.length();
+							}
 
 							// Create des circuit.
 							BristolCryptoFactory desFac = new BristolCryptoFactory(bool);
@@ -385,13 +403,18 @@ public class VerYaoTests {
 
 							boolean[] in_val = toBoolean(in1);
 							in = bool.getKnownConstantSBools(in_val);
-							VerYaoConfiguration.i1 = fromBoolean(in_val);
-							VerYaoConfiguration.li1 = VerYaoConfiguration.i1.length();
-							
-							VerYaoConfiguration.i2 = "";
-							VerYaoConfiguration.li2 = VerYaoConfiguration.i2.length();
 							out = bool.getSBools(256);
 
+							VerYaoConfiguration.li1 = 512;
+							VerYaoConfiguration.li2 = 0;
+							
+							if (conf.netConf.getMyId() == 1) {
+								VerYaoConfiguration.i1.append(fromBoolean(in_val));
+							}
+							else {
+								VerYaoConfiguration.i2.append("");
+							}
+							
 							// Create SHA1 circuit.
 							BristolCryptoFactory sha256Fac = new BristolCryptoFactory(bool);
 							BristolCircuit sha256 = sha256Fac.getSha256Circuit(in, out);
@@ -472,13 +495,19 @@ public class VerYaoTests {
 
 							boolean[] in_val = toBoolean(in1);
 							in = bool.getKnownConstantSBools(in_val);
-							VerYaoConfiguration.i1 = fromBoolean(in_val);
-							VerYaoConfiguration.li1 = VerYaoConfiguration.i1.length();
-							
-							VerYaoConfiguration.i2 = "";
-							VerYaoConfiguration.li2 = VerYaoConfiguration.i2.length();
 							out = bool.getSBools(128);
 
+							VerYaoConfiguration.li1 = 512;
+							VerYaoConfiguration.li2 = 0;
+							
+							if (conf.netConf.getMyId() == 1) {
+								VerYaoConfiguration.i1.append(fromBoolean(in_val));
+							}
+							else {
+								VerYaoConfiguration.i2.append("");
+							}
+							
+							
 							// Create MD5 circuit.
 							BristolCryptoFactory md5Fac = new BristolCryptoFactory(bool);
 							BristolCircuit md5 = md5Fac.getMD5Circuit(in, out);
@@ -550,13 +579,18 @@ public class VerYaoTests {
 
 							boolean[] in_val = toBoolean(in1);
 							in = bool.getKnownConstantSBools(in_val);
-							VerYaoConfiguration.i1 = fromBoolean(in_val);
-							VerYaoConfiguration.li1 = VerYaoConfiguration.i1.length();
-							
-							VerYaoConfiguration.i2 = "";
-							VerYaoConfiguration.li2 = VerYaoConfiguration.i2.length();
 							out = bool.getSBools(160);
 
+							VerYaoConfiguration.li1 = 512;
+							VerYaoConfiguration.li2 = 0;
+							
+							if (conf.netConf.getMyId() == 1) {
+								VerYaoConfiguration.i1.append(fromBoolean(in_val));
+							}
+							else {
+								VerYaoConfiguration.i2.append("");
+							}
+							
 							// Create SHA1 circuit.
 							BristolCryptoFactory sha1Fac = new BristolCryptoFactory(bool);
 							BristolCircuit aes = sha1Fac.getSha1Circuit(in, out);
@@ -617,10 +651,10 @@ public class VerYaoTests {
 							BasicLogicBuilder builder = new BasicLogicBuilder(prov);
 							
 							SBool[] in1 = builder.knownSBool(comp1);
-							VerYaoConfiguration.i1 = fromBoolean(comp1);
+							VerYaoConfiguration.i1.append(fromBoolean(comp1));
 							VerYaoConfiguration.li1 = VerYaoConfiguration.i1.length();
 							SBool[] in2 = builder.knownSBool(comp2);
-							VerYaoConfiguration.i2 = fromBoolean(comp2);
+							VerYaoConfiguration.i2.append(fromBoolean(comp2));
 							VerYaoConfiguration.li2 = VerYaoConfiguration.i2.length();
 							
 							SBool compRes1 = builder.greaterThan(in1, in2);

@@ -28,7 +28,6 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 	static int n;
 	static int m;
 	static int q;
-	static int index;
 		
 	static List<Integer> A;
 	static List<Integer> B;
@@ -36,8 +35,8 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 		
 	static List<VerYaoProtocol> gates;
 	
-	static String i1;
-	static String i2;
+	static StringBuilder i1;
+	static StringBuilder i2;
 	
 	static String [] state1;
 	static String [] state2;
@@ -45,10 +44,9 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 	static List<VerYaoOBool> output1;
 	static List<VerYaoOBool> output2;
 	
-	static String output;
+	static StringBuilder output;
 	
 	static HashMap<Integer,Integer> assoc;
-	static HashMap<VerYaoSBool,Integer> assoc_not_used;
 	
 	static int veryaocounter;
 	
@@ -71,8 +69,8 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 		VerYaoConfiguration.B = new ArrayList<Integer>();
 		VerYaoConfiguration.G = new ArrayList<String>();
 		VerYaoConfiguration.gates = new ArrayList<VerYaoProtocol>();
-		VerYaoConfiguration.i1 = "";
-		VerYaoConfiguration.i2 = "";
+		VerYaoConfiguration.i1 = new StringBuilder();
+		VerYaoConfiguration.i2 = new StringBuilder();
 		VerYaoConfiguration.state1 = null;
 		VerYaoConfiguration.state2 = null;
 		
@@ -83,13 +81,11 @@ public class VerYaoConfiguration implements ProtocolSuiteConfiguration {
 		VerYaoConfiguration.output1 = new ArrayList<VerYaoOBool>();
 		VerYaoConfiguration.output2 = new ArrayList<VerYaoOBool>();
 		
-		VerYaoConfiguration.output = "";
+		VerYaoConfiguration.output = new StringBuilder();
 		
 		VerYaoConfiguration.assoc = new HashMap<Integer,Integer>();
-		VerYaoConfiguration.assoc_not_used = new HashMap<VerYaoSBool,Integer>();
 		
 		VerYaoConfiguration.veryaocounter = 0;
-		VerYaoConfiguration.index = 0;
 		
 		VerYaoConfiguration.alreadyInputs = false;
 		VerYaoConfiguration.alreadyInputs2 = false;

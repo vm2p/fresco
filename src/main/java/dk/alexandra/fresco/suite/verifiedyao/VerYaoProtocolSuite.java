@@ -1,7 +1,6 @@
 package dk.alexandra.fresco.suite.verifiedyao;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -84,17 +83,15 @@ public class VerYaoProtocolSuite implements ProtocolSuite {
 			protocolNetwork.setInput(inputForThisRound);
 			protocolNetwork.nextRound();
 		} while (status != EvaluationStatus.IS_DONE);
-		
-		System.out.println("OUTPUT = " + VerYaoConfiguration.output);
-		
+				
 		for (i = 0; i < VerYaoConfiguration.output.length(); i ++) {
 			if (VerYaoConfiguration.output.charAt(i) == '1') {
 				VerYaoConfiguration.output1.get(i).setValue(true);
 				VerYaoConfiguration.output2.get(i).setValue(true);
 			}
 			else {
-			VerYaoConfiguration.output1.get(i).setValue(false);
-			VerYaoConfiguration.output2.get(i).setValue(false);
+				VerYaoConfiguration.output1.get(i).setValue(false);
+				VerYaoConfiguration.output2.get(i).setValue(false);
 			}
 		}
 				

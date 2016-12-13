@@ -19,15 +19,15 @@ public class VerYaoCloseBoolProtocol extends VerYaoProtocol implements CloseBool
 		
 		if (source == 1) {
 			if (this.in.isReady()) {
-				if (this.in.getValue()) VerYaoConfiguration.i1 = VerYaoConfiguration.i1 + "1";
-				else VerYaoConfiguration.i1 = VerYaoConfiguration.i1 + "0";
+				if (this.in.getValue()) VerYaoConfiguration.i1.append(1);
+				else VerYaoConfiguration.i1.append(0);
 			}
 		}
 		
 		else {
 			if (this.in.isReady()) {
-				if (this.in.getValue()) VerYaoConfiguration.i2 = VerYaoConfiguration.i2 + "1";
-				else VerYaoConfiguration.i2 = VerYaoConfiguration.i2 + "0";
+				if (this.in.getValue()) VerYaoConfiguration.i2.append(1);
+				else VerYaoConfiguration.i2.append(0);
 			}
 		}
 		

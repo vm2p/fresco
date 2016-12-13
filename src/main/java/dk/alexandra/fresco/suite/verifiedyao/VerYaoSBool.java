@@ -65,7 +65,7 @@ private static final long serialVersionUID = -4614951451129474002L;
 
 	@Override
 	public String toString() {
-		return Integer.toString(this.id);
+		return "VerYaoSBool(" + this.id + "; " + this.value + ")";
 	}
 	
 }
