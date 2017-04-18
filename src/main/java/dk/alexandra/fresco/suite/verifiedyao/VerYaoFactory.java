@@ -14,22 +14,34 @@ import dk.alexandra.fresco.lib.field.bool.OrProtocolFactory;
 import dk.alexandra.fresco.lib.field.bool.XorProtocol;
 import dk.alexandra.fresco.lib.logic.AbstractBinaryFactory;
 
+/**
+ * Verified Yao boolean factory.
+ * 
+ * This factory builds boolean circuits. The allowed gates are:
+ 	* AND gates.
+ 	* OR gates.
+ 	* INV gates.
+ 	* XOR gates. 
+ * We use a counter here to define the IDs of the wires. This ID will
+ * after be fixed to match a valid circuit description to our OCaml
+ * evaluator.
+ * */
+
 public class VerYaoFactory extends AbstractBinaryFactory implements BasicLogicFactory, OrProtocolFactory {
 	
 	private int counter;
 	private int id;
 	
+	/**
+	 * Builds a new boolean factory, with respect to a
+	 * party.
+	 * 
+	 * @param id
+	 * 	Party ID
+	 * */
 	public VerYaoFactory (int id) {
 		this.counter = 0;
 		this.id = id;
-	}
-	
-	public int getCounter() {
-		return this.counter;
-	}
-	
-	public void setCounter(int counter) {
-		this.counter = counter;
 	}
 
 	@Override
@@ -75,8 +87,8 @@ public class VerYaoFactory extends AbstractBinaryFactory implements BasicLogicFa
 		if (this.id == 2) {
 			for (int i=0; i<bools.length; i++) {
 				res[i] = new VerYaoSBool(this.counter++, bools[i]);
-				Integer val = VerYaoConfiguration.assoc.putIfAbsent(this.counter-1, VerYaoConfiguration.veryaocounter);
-				if (val == null) VerYaoConfiguration.veryaocounter = VerYaoConfiguration.veryaocounter + 1;
+				Integer val = VerYaoConfiguration.assoc.putIfAbsent(this.counter-1, VerYaoConfiguration.in_counter);
+				if (val == null) VerYaoConfiguration.in_counter = VerYaoConfiguration.in_counter + 1;
 			}
 		}
 		else {

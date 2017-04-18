@@ -3,12 +3,9 @@ package dk.alexandra.fresco.suite.verifiedyao;
 import dk.alexandra.fresco.framework.value.OBool;
 
 /**
- * A public boolean value.
- * 
- * TODO: The O-types should rather be common to all protocol suites,
- * i.e., not DummyOBool, ShamirOBool, etc.
- *
+ * A public (open) boolean value.
  */
+
 public class VerYaoOBool implements OBool {
 
 	private static final long serialVersionUID = -4762843635114299987L;
@@ -17,11 +14,27 @@ public class VerYaoOBool implements OBool {
 	
 	private Boolean value;
 
+	/**
+	 * Builds an open boolean, with the given
+	 * ID and boolean value.
+	 * 
+	 * @param id
+	 * 		wire ID
+	 * @param b
+	 * 		wire boolean value
+	 * */
 	public VerYaoOBool(int id, boolean b) {
 		this.id = id;
 		this.value = b;
 	}
 
+	/**
+	 * Builds an open boolean, with the given
+	 * ID but no boolean value.
+	 * 
+	 * @param id
+	 * 		wire ID
+	 * */
 	public VerYaoOBool(int id) {
 		this.id = id;
 		this.value = null;
@@ -59,19 +72,9 @@ public class VerYaoOBool implements OBool {
 		this.value = b;
 	}
 	
-	public int getId() {
-		
-		return this.id;
-	}
-	
-	public void setId(int id) {
-		
-		this.id = id;
-	}
-	
 	@Override
 	public String toString() {
-		return "VerYaoOBool(" + this.id + "; " + this.value + ")";
+		return "VerYaoOBool(" + this.id + "," + this.value + ")";
 	}
 	
 }

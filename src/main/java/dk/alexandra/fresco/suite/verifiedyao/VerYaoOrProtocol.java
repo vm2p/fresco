@@ -6,60 +6,85 @@ import dk.alexandra.fresco.framework.value.SBool;
 import dk.alexandra.fresco.framework.value.Value;
 import dk.alexandra.fresco.lib.field.bool.OrProtocol;
 
+/**
+ * Implementation of a boolean OR gate.
+ * */
+
 public class VerYaoOrProtocol extends VerYaoProtocol implements OrProtocol {
 	
-	VerYaoSBool inLeft, inRight, out;
+	VerYaoSBool in_left, in_right, out;
 	
-	public VerYaoOrProtocol(SBool inLeft, SBool inRight, SBool out) {
-		super(inLeft, inRight, out);
-		this.inLeft = (VerYaoSBool)inLeft;
-		this.inRight = (VerYaoSBool)inRight;
+	/**
+	 * Builds a (generic) gate with two closed input wires and
+	 * one closed output wire.
+	 * 
+	 * NOTE: this is still not an "OR" gate, as we only define its
+	 * 'func' parameter in the evaluation step.
+	 * 
+	 * @param inLeft
+	 * 		left input wire
+	 * @param inRight
+	 * 		right input wire
+	 * @param out
+	 * 		output wire
+	 * */
+	public VerYaoOrProtocol(SBool in_left, SBool in_right, SBool out) {
+		super(in_left, in_right, out);
+		this.in_left = (VerYaoSBool)in_left;
+		this.in_right = (VerYaoSBool)in_right;
 		this.out = (VerYaoSBool)out;
 	}
 
 	@Override
 	public String toString() {
-		return "VerYaoOrProtocol(" +  this.getIn_w()[0] + "," + this.getIn_w()[1] + "," + this.getOut_w()[0] + ")";
+		return "VerYaoOrProtocol(" +  this.get_in_wires()[0] + "," + this.get_in_wires()[1] + "," + this.get_out_wires()[0] + ")";
 	}
 
 	@Override
 	public Value[] getInputValues() {
-		return new Value[]{this.getIn_w()[0], this.getIn_w()[1]};
+		return new Value[]{this.get_in_wires()[0], this.get_in_wires()[1]};
 	}
 
 	@Override
 	public Value[] getOutputValues() {
-		return new Value[]{this.getOut_w()[0]};
+		return new Value[]{this.get_out_wires()[0]};
 	}
 
 	@Override
+	/**
+	 * Evaluation of an OR gate.
+	 * 
+	 * No real evaluation is made and only party 2 performs some computation.
+	 * The evaluation function starts by re-defining new input wires with
+	 * the correct IDs and by defining a new ID to the output wire. After,
+	 * the gate definition is completed by its functionality and new wires.
+	 * Finally, the gate is attached to the other already evaluated gates.
+	 * */
 	public EvaluationStatus evaluate(int round, ResourcePool resourcePool,
 			SCENetwork network) {
 		
 		if (resourcePool.getMyId() == 2) {
 			
-			if (VerYaoConfiguration.q >= 0) VerYaoConfiguration.alreadyInputs = true;
-			if (VerYaoConfiguration.q >= 0 && !VerYaoConfiguration.alreadyInputs) VerYaoConfiguration.alreadyInputs2 = false;
+			if (VerYaoConfiguration.q >= 0) VerYaoConfiguration.already_inputs = true;
 			
-			if (VerYaoConfiguration.assoc.containsKey(this.inLeft.getId())) {
-				if (VerYaoConfiguration.outWires.contains(this.inLeft)) this.inLeft.setId(this.inLeft.getId() + VerYaoConfiguration.alreadyInputsI);
-				else this.inLeft.setId(VerYaoConfiguration.assoc.get(this.inLeft.getId()));
+			if (VerYaoConfiguration.assoc.containsKey(this.in_left.getId())) {
+				if (VerYaoConfiguration.out_wires.contains(this.in_left)) this.in_left.setId(this.in_left.getId() + VerYaoConfiguration.in_counter2);
+				else this.in_left.setId(VerYaoConfiguration.assoc.get(this.in_left.getId()));
 			}
 			
-			if (VerYaoConfiguration.assoc.containsKey(this.inRight.getId())) {
-				if (VerYaoConfiguration.outWires.contains(this.inRight)) this.inRight.setId(this.inRight.getId() + VerYaoConfiguration.alreadyInputsI);
-				else this.inRight.setId(VerYaoConfiguration.assoc.get(this.inRight.getId()));
+			if (VerYaoConfiguration.assoc.containsKey(this.in_right.getId())) {
+				if (VerYaoConfiguration.out_wires.contains(this.in_right)) this.in_right.setId(this.in_right.getId() + VerYaoConfiguration.in_counter2);
+				else this.in_right.setId(VerYaoConfiguration.assoc.get(this.in_right.getId()));
 			}
 				
-			this.out.setId(VerYaoConfiguration.li1 + VerYaoConfiguration.li2 + VerYaoConfiguration.q);
-			if (!VerYaoConfiguration.alreadyInputs2) VerYaoConfiguration.outWires.add(this.out);
+			this.out.setId(VerYaoConfiguration.n_wires1 + VerYaoConfiguration.n_wires2 + VerYaoConfiguration.q);
+			VerYaoConfiguration.out_wires.add(this.out);
 			
-			this.setGate("OR");
+			this.setFunc("OR");
 			this.setQ(VerYaoConfiguration.q);
 			VerYaoConfiguration.q = VerYaoConfiguration.q + 1;
 			VerYaoConfiguration.gates.add(this);
 		}
-		
 		return EvaluationStatus.IS_DONE;
 	}
 }

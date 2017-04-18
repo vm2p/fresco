@@ -15,16 +15,39 @@ import dk.alexandra.fresco.framework.sce.resources.ResourcePool;
 import dk.alexandra.fresco.suite.ProtocolSuite;
 import dk.alexandra.fresco.framework.network.*;
 
+/**
+ * Verified Yao Protocol Suite.
+ * 
+ * This suite evaluates boolean circuits according to
+ * the input of two parties using a verified implementation
+ * of Yao's SFE protocol.
+ * */
+
 public class VerYaoProtocolSuite implements ProtocolSuite {
 	
 	private Network network;
 	private ResourcePool rp;
 	private SCENetworkImpl protocolNetwork;
 	
+	/**
+	 * Builds a protocol suite that will evaluate circuits
+	 * using the Yao SFE protocol.
+	 * */
 	public VerYaoProtocolSuite() {
 	}
 	
 	@Override
+	/**
+	 * At the beginning of the evaluation, we need to store the network,
+	 * the resourcePool and the protocol network that will be used during
+	 * the evaluation, so that we are able to correctly create a 
+	 * VerYaoEvalProtocol gate that will perform all the computation.
+	 * 
+	 * @param resourcePool
+	 * 		resourcePool to be used in the evaluation
+	 * @param conf
+	 * 		protocol suite configuration
+	 * */
 	public void init(ResourcePool resourcePool, ProtocolSuiteConfiguration conf) {
 
 		this.network = resourcePool.getNetwork();
@@ -43,6 +66,17 @@ public class VerYaoProtocolSuite implements ProtocolSuite {
 	}
 
 	@Override
+	/**
+	 * Finishes the FRESCO evaluation part (that builds the circuit) and
+	 * starts the OCaml evaluation part (where the actual evaluation happens).
+	 * 
+	 * The method creates a VerYaoEvalProtocol gate that will perform
+	 * all the necessary queries to the OCaml evaluator and will evaluate
+	 * that gate until it returns that the process is complete.
+	 * 
+	 * In the end, the output wires of both gates are filled with the
+	 * values of the input.
+	 * */
 	public void finishedEval() {
 		VerYaoEvalProtocol eval = new VerYaoEvalProtocol();
 		
@@ -83,21 +117,20 @@ public class VerYaoProtocolSuite implements ProtocolSuite {
 			protocolNetwork.setInput(inputForThisRound);
 			protocolNetwork.nextRound();
 		} while (status != EvaluationStatus.IS_DONE);
-				
+			
+		//Sets the output of each gate according to the result from OCaml
 		for (i = 0; i < VerYaoConfiguration.output.length(); i ++) {
 			if (VerYaoConfiguration.output.charAt(i) == '1') {
-				VerYaoConfiguration.output1.get(i).setValue(true);
-				VerYaoConfiguration.output2.get(i).setValue(true);
+				VerYaoConfiguration.out_wires1.get(i).setValue(true);
+				VerYaoConfiguration.out_wires2.get(i).setValue(true);
 			}
 			else {
-				VerYaoConfiguration.output1.get(i).setValue(false);
-				VerYaoConfiguration.output2.get(i).setValue(false);
+				VerYaoConfiguration.out_wires1.get(i).setValue(false);
+				VerYaoConfiguration.out_wires2.get(i).setValue(false);
 			}
 		}
 				
-		/*
-		 * Clean
-		 * */
+		//Cleans the auxiliary files created during the execution
 		File f = new File("p2stage1.dat");
 		f.delete();
 		f = new File("p1stage1.dat");

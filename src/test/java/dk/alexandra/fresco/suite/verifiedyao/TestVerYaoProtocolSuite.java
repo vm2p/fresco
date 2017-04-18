@@ -19,8 +19,6 @@ import dk.alexandra.fresco.framework.sce.configuration.TestSCEConfiguration;
 import dk.alexandra.fresco.framework.sce.evaluator.EvaluationStrategy;
 import dk.alexandra.fresco.framework.sce.resources.storage.InMemoryStorage;
 import dk.alexandra.fresco.framework.sce.resources.storage.Storage;
-import dk.alexandra.fresco.lib.bool.ComparisonBooleanTests;
-import dk.alexandra.fresco.lib.crypto.BristolCryptoTests;
 import dk.alexandra.fresco.suite.ProtocolSuite;
 
 
@@ -33,7 +31,6 @@ import dk.alexandra.fresco.suite.ProtocolSuite;
 public class TestVerYaoProtocolSuite {
 
 	private void runTest(TestThreadFactory f, EvaluationStrategy evalStrategy) throws Exception {
-		// The dummy protocol suite has the nice property that it can be run by just one player.
 		int noPlayers = 2;
 		Level logLevel = Level.FINE;
 		Reporter.init(logLevel);
@@ -66,59 +63,34 @@ public class TestVerYaoProtocolSuite {
 	/***/
 	
 	
-	/*@Test
+	@Test
 	public void test_Add32x32_Sequential() throws Exception {
 		runTest(new VerYaoTests.Add32x32Test(), EvaluationStrategy.SEQUENTIAL);
-	}*/
+	}
 	
-	/*@Test
+	@Test
 	public void test_Mult32x32_Sequential() throws Exception {
 		runTest(new VerYaoTests.Mult32x32Test(), EvaluationStrategy.SEQUENTIAL);
-	}*/
+	}
 	
 	@Test
 	public void test_AES_Sequential() throws Exception {
 		runTest(new VerYaoTests.AesTest(), EvaluationStrategy.SEQUENTIAL);
 	}
 	
-	/*@Test
-	public void test_AES_Parallel() throws Exception {
-		runTest(new BristolCryptoTests.AesTest(), EvaluationStrategy.PARALLEL);
-	}*/
-	
-	/*@Test
-	public void test_AES_SequentialBatched() throws Exception {
-		runTest(new BristolCryptoTests.AesTest(), EvaluationStrategy.SEQUENTIAL_BATCHED);
-	}*/
-	
-	/*@Test
-	public void test_AES_ParallelBatched() throws Exception {
-		runTest(new BristolCryptoTests.AesTest(), EvaluationStrategy.PARALLEL_BATCHED);
-	}*/
-	
-	/*@Test
+	@Test
 	public void test_DES_Sequential() throws Exception {
 		runTest(new VerYaoTests.DesTest(), EvaluationStrategy.SEQUENTIAL);
-	}*/
+	}
 	
-	/*@Test
+	@Test
 	public void test_SHA1_Sequential() throws Exception {
 		runTest(new VerYaoTests.Sha1Test(), EvaluationStrategy.SEQUENTIAL);
-	}*/
+	}
 
-	/*@Test
+	@Test
 	public void test_SHA256_Sequential() throws Exception {
 		runTest(new VerYaoTests.Sha256Test(), EvaluationStrategy.SEQUENTIAL);
-	}*/
-	
-	/*@Test
-	public void test_SHA256_Parallel() throws Exception {
-		runTest(new BristolCryptoTests.Sha256Test(), EvaluationStrategy.PARALLEL);
-	}*/
-	
-	/*@Test
-	public void test_comparison() throws Exception {
-		runTest(new VerYaoTests.TestGreaterThan(), EvaluationStrategy.SEQUENTIAL);
-	}*/
+	}
 
 }

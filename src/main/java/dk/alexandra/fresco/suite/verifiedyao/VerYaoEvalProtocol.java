@@ -16,20 +16,44 @@ import dk.alexandra.fresco.framework.network.SCENetwork;
 import dk.alexandra.fresco.framework.sce.resources.ResourcePool;
 import dk.alexandra.fresco.framework.value.Value;
 
+/**
+ * VerYaoEvalProtocol gate.
+ * 
+ * This is the gate were all the evaluation will be made.
+ * */
+
 public class VerYaoEvalProtocol extends VerYaoProtocol {
 
 	private boolean done = false;
 	
+	/**
+	 * Returns a list containing the left incoming wires of
+	 * each gate.
+	 * 
+	 * @param gates
+	 * 		circuit gates
+	 * @return
+	 * 		left input wires of each gate
+	 * */
 	private List<Integer> getA(List<VerYaoProtocol> gates) {
 		List<Integer> ret = new ArrayList<Integer>();
 		
 		Iterator<VerYaoProtocol> iter = gates.iterator();
 		
-		while (iter.hasNext()) ret.add(iter.next().getIn_w()[0].getId());
+		while (iter.hasNext()) ret.add(iter.next().get_in_wires()[0].getId());
 		
 		return ret;
 	}
 	
+	/**
+	 * Returns a list containing the right incoming wires of
+	 * each gate.
+	 * 
+	 * @param gates
+	 * 		circuit gates
+	 * @return
+	 * 		right input wires of each gate
+	 * */
 	private List<Integer> getB(List<VerYaoProtocol> gates) {
 		List<Integer> ret = new ArrayList<Integer>();
 		
@@ -38,20 +62,32 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		while (iter.hasNext()) {
 			VerYaoProtocol gate = iter.next();
 			
-			if (gate.getInarity() == 1) {
-				ret.add(gate.getIn_w()[0].getId());
+			if (gate.get_in_arity() == 1) {
+				ret.add(gate.get_in_wires()[0].getId());
 			}
 			else {
-				ret.add(gate.getIn_w()[1].getId());
+				ret.add(gate.get_in_wires()[1].getId());
 			}
 		}
 		
 		return ret;
 	}
 	
-	private String list2string(List<Integer> l) {
+	/**
+	 * Transforms a list of wires' ID's into a string with
+	 * comma separated values.
+	 * 
+	 * Should be used to map the lists A and B into strings.
+	 * 
+	 * @param wires
+	 * 	List of wires' ID's
+	 * 
+	 * @return
+	 * 	String of the wires' ID's
+	 * */
+	private String wires_to_string(List<Integer> wires) {
 		StringBuilder ret = new StringBuilder();
-		Iterator<Integer> iter = l.iterator();
+		Iterator<Integer> iter = wires.iterator();
 		
 		while (iter.hasNext()) {
 			Integer next = iter.next();
@@ -62,9 +98,21 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		return ret.toString();
 	}
 	
-	private String gates2string(List<String> l) {
+	/**
+	 * Transforms a list of gates' functionalities into a string with
+	 * comma separated values
+	 * 
+	 * Should be used to transform the G list into a string.
+	 * 
+	 * @param gates
+	 * 	List of gates
+	 * 
+	 * @return
+	 * 	String of the gates
+	 * */
+	private String gates_to_string(List<String> gates) {
 		StringBuilder ret = new StringBuilder();
-		Iterator<String> iter = l.iterator();
+		Iterator<String> iter = gates.iterator();
 		
 		while (iter.hasNext()) {
 			String next = iter.next();
@@ -75,7 +123,19 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		return ret.toString();
 	}
 	
-	private String parseInputs (String input) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+	/**
+	 * Processes the inputs of each party.
+	 * 
+	 * If the input of some party is empty, then it returns the string
+	 * "empty". Otherwise, it creates a string with comma separated
+	 * boolean values (0 or 1).
+	 * 
+	 * @param input
+	 * 		input string
+	 * @return
+	 * 		processed input string
+	 * */
+	private String parse_inputs (String input) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		StringBuilder ret = new StringBuilder();
 		
 		if (input.equals("")) {
@@ -107,11 +167,13 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 	 * 
 	 * @param g
 	 * 		gate
+	 * @return
+	 * 		functionality description in truth table format
 	 * */
 	private String truthT(VerYaoProtocol g) {
 		String ret = "";
 		
-		switch (g.getGate()) {
+		switch (g.getFunc()) {
 		case "AND":
 			ret = "0001";
 			break;
@@ -132,57 +194,83 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 		return ret;
 	}
 	
-	private void fixInputWires() {
-		if (!VerYaoConfiguration.inW1.isEmpty()) {
-			for (int i = 0 ; i < VerYaoConfiguration.li1 ; i++) {
-				VerYaoConfiguration.inW1.get(i).setId(i);
+	/**
+	 * Fixes the ID's of the input wires of each party.
+	 * */
+	private void fix_input_wires() {
+		if (!VerYaoConfiguration.in_wires1.isEmpty()) {
+			for (int i = 0 ; i < VerYaoConfiguration.n_wires1 ; i++) {
+				VerYaoConfiguration.in_wires1.get(i).setId(i);
 			}
 		}
-		if (!VerYaoConfiguration.inW2.isEmpty()) {
-			for (int i = 0 ; i < VerYaoConfiguration.li2 ; i++) {
-				VerYaoConfiguration.inW2.get(i).setId(i + VerYaoConfiguration.li1);
+		if (!VerYaoConfiguration.in_wires2.isEmpty()) {
+			for (int i = 0 ; i < VerYaoConfiguration.n_wires2 ; i++) {
+				VerYaoConfiguration.in_wires2.get(i).setId(i + VerYaoConfiguration.n_wires1);
 			}
 		}
 	}
 	
 	@Override
+	/**
+	 * Assuming that the configuration of the circuit is correct, evaluation
+	 * of a VerYaoEvalProtocol gate evaluates the circuit with the verified
+	 * Yao evaluator.
+	 * 
+	 * According to the party and the round, it will work as follows:
+	 	* Round 0: 
+	 		* Party 1 -> waits for the input from party 2.
+	 		* Party 2 -> sets up the circuit, calls the OCaml evaluator to
+	 		obtain the result of the first step of the protocol and sends it
+	 		to party 1.
+ 		* Round 1:
+ 			* Party 1 -> receives the round 0 input from party 2, calls the 
+ 			OCaml evaluator to obtain the result of the second step of the 
+ 			protocol and sends it to party 2.
+	 		* Party 2 -> waits for the input from party 1.
+ 		* Round 2:
+ 			* Party 1 ->  waits for the input from party 2.
+ 			* Party 2 -> receives the round 1 input from party 1, calls the 
+ 			OCaml evaluator to obtain the result of the third step of the 
+ 			protocol and sends it to party 1.
+		* Round 3:
+			* Party 1 -> receives the round 2 input from party 2, calls the 
+ 			OCaml evaluator to obtain the final output of the protocol,
+ 			sends an empty message to party 2 and ends its evaluation process.
+	 		* Party 2 -> waits for the input from party 1.
+ 		* Round 4:
+ 			* Party 1 -> already ended the evaluation process.
+ 			* Party 2 -> receives the empty message from party 1 and
+ 			ends its evaluation process.
+	 * */
 	public EvaluationStatus evaluate(int round, ResourcePool resourcePool, SCENetwork network) {
 				
 		switch (resourcePool.getMyId()) {
 		case 1 :
 			switch (round) {
 			case 0:
+				//Expecting message from party 2
 				network.expectInputFromPlayer(2);
 				break;
 			case 1:
 				Serializable inmsg = "";
-								
+							
+				//Receive message from party 2
 				inmsg = network.receive(2);
-																
+						
+				//We write the inputs of the execution to a file.
 				FileWriter p1stage1 = null;
 				try {
 					p1stage1 = new FileWriter("p1stage1.dat");
-					p1stage1.write(parseInputs(VerYaoConfiguration.i1.toString()) + "\n");
+					p1stage1.write(parse_inputs(VerYaoConfiguration.input1.toString()) + "\n");
 					p1stage1.write(inmsg + "\n");
 					p1stage1.close();
-				} catch (IOException e3) {
-					// TODO Auto-generated catch block
-					e3.printStackTrace();
-				} catch (NoSuchFieldException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				} 
 				
-				String command = "./p1_stage1.native";
+				//OCaml execution
+				String command = "./p1_stage1.byte";
 				
 				Process p = null;
 				BufferedReader bri = null;
@@ -205,26 +293,29 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				String[] msg = line.split(" ");
 				String outmsg = msg[msg.length-1];
 				
+				//We write the state of the party to a file.
 				FileWriter fw = null;
 				try {
 					fw = new FileWriter("state1.dat");
 					fw.write(msg[0] + "\n");
 					fw.close();
-				} catch (IOException e2) {
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e2.printStackTrace();
+					e.printStackTrace();
 				}
 								
-				//send					
+				//Send message to party 2					
 				network.send(2, outmsg);
 				
 				break;
 			case 2:
+				//Expecting message from party 2
 				network.expectInputFromPlayer(2);
 				break;
 			case 3:				
 				String cy = null, eg = null, n = null, m = null, q = null, aa = null, bb = null, fg = null, x2g = null;
 
+				//Receives 9 messages from party 2
 				cy = network.receive(2);
 				eg = network.receive(2);
 				n = network.receive(2);
@@ -235,6 +326,7 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				fg = network.receive(2);
 				x2g = network.receive(2);
 				
+				//We write a "simplified" state of party 2 to a file.
 				fw = null;
 				try {
 					fw = new FileWriter("state2simpl.dat");
@@ -248,34 +340,25 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 					fw.write(fg + "\n");
 					fw.write(x2g + "\n");
 					fw.close();
-				} catch (IOException e2) {
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e2.printStackTrace();
+					e.printStackTrace();
 				}
-							
+						
+				
+				//We write the inputs of the execution to a file.
 				FileWriter p1stage2 = null;
 				try {
 					p1stage2 = new FileWriter("p1stage2.dat");
-					p1stage2.write(parseInputs(VerYaoConfiguration.i1.toString()) + "\n");
+					p1stage2.write(parse_inputs(VerYaoConfiguration.input1.toString()) + "\n");
 					p1stage2.close();
-				} catch (IOException e3) {
-					// TODO Auto-generated catch block
-					e3.printStackTrace();
-				} catch (NoSuchFieldException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
-				command = "./p1_stage2.native";
+				//OCaml execution
+				command = "./p1_stage2.byte";
 				
 				p = null;
 				bri = null;
@@ -291,23 +374,27 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 					e.printStackTrace();
 				}
 				
-				/*
-				 * The final output of the protocol will be stored in the variable 'line'
-				 * */
+				//The final output of the protocol will be stored in the variable 'line'
 				VerYaoConfiguration.output.append(line);
+				
+				//The protocol execution is done.
 				done = true;
+				
+				//We send a dummy message to party 2 to signal the end of the protocol
 				network.send(2, "");
+				
 				break;
 			default:
 				throw new MPCException("No further rounds.");
-			}
+				}
 			break;
 		case 2 :
 			switch (round) {
 			case 0:
-				VerYaoConfiguration.n = VerYaoConfiguration.li1 + VerYaoConfiguration.li2;
+				//Definition of the circuit description
+				VerYaoConfiguration.n = VerYaoConfiguration.n_wires1 + VerYaoConfiguration.n_wires2;
 								
-				fixInputWires();
+				fix_input_wires();
 
 				VerYaoConfiguration.A = getA(VerYaoConfiguration.gates);
 				VerYaoConfiguration.B = getB(VerYaoConfiguration.gates);
@@ -316,15 +403,16 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				
 				String aa, bb, gg;
 				
-				aa = list2string(VerYaoConfiguration.A);
-				bb = list2string(VerYaoConfiguration.B);
-				gg = gates2string(VerYaoConfiguration.G);
+				aa = wires_to_string(VerYaoConfiguration.A);
+				bb = wires_to_string(VerYaoConfiguration.B);
+				gg = gates_to_string(VerYaoConfiguration.G);
 				
+				//We write the inputs of the execution to a file.
 				FileWriter p2stage1 = null;
 				try {
 					p2stage1 = new FileWriter("p2stage1.dat");
-					p2stage1.write(VerYaoConfiguration.li1 + "\n");
-					p2stage1.write(parseInputs(VerYaoConfiguration.i2.toString()) + "\n");
+					p2stage1.write(VerYaoConfiguration.n_wires1 + "\n");
+					p2stage1.write(parse_inputs(VerYaoConfiguration.input2.toString()) + "\n");
 					p2stage1.write(VerYaoConfiguration.n + "\n");
 					p2stage1.write(VerYaoConfiguration.m + "\n");
 					p2stage1.write(VerYaoConfiguration.q + "\n");
@@ -332,24 +420,13 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 					p2stage1.write(bb + "\n");
 					p2stage1.write(gg + "\n");
 					p2stage1.close();
-				} catch (IOException e3) {
-					// TODO Auto-generated catch block
-					e3.printStackTrace();
-				} catch (NoSuchFieldException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				} 
 				
-				String command = "./p2_stage1.native";
+				//OCaml execution
+				String command = "./p2_stage1.byte";
 				
 				Process p = null;
 				BufferedReader bri = null;
@@ -365,8 +442,13 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 					e.printStackTrace();
 				}
 				
+				/*
+				 * OCaml outputs a series of values separated by spaces " ".
+				 * This divides the output into 'state' and 'message'.
+				 * */
 				String[] output = line.split(" ");
 				
+				//We write the state of the party to a file.
 				FileWriter fw = null;
 				try {
 					fw = new FileWriter("state2.dat");
@@ -381,23 +463,29 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 					fw.write(output[3] + "\n");
 					fw.write(output[4] + "\n");
 					fw.close();
-				} catch (IOException e2) {
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e2.printStackTrace();
+					e.printStackTrace();
 				}
 				
+				//The message to be sent is the last value of the OCaml output
 				String msg = output[output.length-1];
-								
+				
+				//Sends the message to party 1
 				network.send(1, msg);
 				break;
 			case 1:
+				//Expecting message from party 1
 				network.expectInputFromPlayer(1);
 				break;
 			case 2:
 				
 				Serializable inmsg = "";
+				
+				//Receives the message of party 1
 				inmsg = network.receive(1);
 								
+				//Writes the input of the execution to a file
 				FileWriter p2stage2 = null;
 				try {
 					p2stage2 = new FileWriter("p2stage2.dat");
@@ -408,7 +496,8 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 					e3.printStackTrace();
 				}
 				
-				command = "./p2_stage2.native";
+				//OCaml execution
+				command = "./p2_stage2.byte";
 								
 				p = null;
 				bri = null;
@@ -423,9 +512,14 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-								
+					
+				/*
+				 * OCaml outputs a series of values separated by spaces " ".
+				 * This divides the output into 'state' and 'message'.
+				 * */
 				output = line.split(" ");
 			
+				//Sends a series of messages to party 1
 				network.send(1, output[0]);
 				network.send(1, output[1]);
 				network.send(1, output[2]);
@@ -439,11 +533,15 @@ public class VerYaoEvalProtocol extends VerYaoProtocol {
 				
 				break;
 			case 3:
+				//Expects message from party 1
 				network.expectInputFromPlayer(1);
 				break;
 			case 4:
+				//Receives the dummy message from party 2
 				inmsg = "";
 				inmsg = network.receive(1);
+				
+				//Signals that the protocol is over
 				done = true;
 				break;
 			default:
